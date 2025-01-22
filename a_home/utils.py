@@ -2,7 +2,10 @@ import os
 
 def get_vestibulares() -> dict:
     result = {}    
-    vestibulares = [vestibular for vestibular in sorted(os.listdir("VESTIBULARES"), reverse=True)]        
+    #PARA USO INTERNO
+    #vestibulares = [vestibular for vestibular in sorted(os.listdir("VESTIBULARES"), reverse=True)]  
+    #PARA PRODUÇÃO      
+    vestibulares = [vestibular for vestibular in sorted(os.listdir(os.path.join("Corretor-Uem","VESTIBULARES")), reverse=True)]        
     imgs = [os.path.join("media", vestibular, "img.jpg") for vestibular in vestibulares]    
     status = [os.path.exists(os.path.join("VESTIBULARES", vestibular, "GABARITOS")) and len(os.listdir(os.path.join("VESTIBULARES", vestibular, "GABARITOS"))) >= 1 for vestibular in vestibulares]
     status = ["done" if s else "loading" for s in status]
