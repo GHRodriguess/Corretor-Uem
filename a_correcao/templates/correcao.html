@@ -12,5 +12,10 @@
     {% include 'partials/navbar.html' %}
 {% endblock %}
 
-{% block content %}
+{% block content %}   
+    {% if not status %}
+            <div class="loading">
+                <span class="loading-text">O GABARITO AINDA NÃO FOI LIBERADO</span>
+            </div>
+    {% endif %}
 {% endblock %}

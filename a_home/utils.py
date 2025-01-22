@@ -1,11 +1,9 @@
 import os
+from utils import global_utils as gu
 
 def get_vestibulares() -> dict:
-    result = {} 
-    #PARA USO INTERNO
-    #base_dir = os.path.join("VESTIBULARES") 
-    #PARA PRODUÇÃO
-    base_dir = os.path.join("Corretor-Uem","VESTIBULARES") 
+    result = {}     
+    base_dir = gu.base_dir()    
     vestibulares = [vestibular for vestibular in sorted(os.listdir(base_dir), reverse=True)]        
     imgs = [os.path.join("media", vestibular, "img.jpg") for vestibular in vestibulares]    
     status = [os.path.exists(os.path.join(base_dir, vestibular, "GABARITOS")) and len(os.listdir(os.path.join(base_dir, vestibular, "GABARITOS"))) >= 1 for vestibular in vestibulares]

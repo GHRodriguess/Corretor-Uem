@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10vh;
+    width: 100%;
+}
+
+.loading-text {
+    font-family: "Lora", serif;
+    font-weight: 700;
+}
+
+@media screen and (max-width: 768px) {
+    .loading-text {
+        font-size: 1.2rem;
+
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .loading-text {
+        font-size: 2.3rem;
+
+    }
+}
