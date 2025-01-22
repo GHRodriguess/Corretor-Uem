@@ -1,13 +1,15 @@
 import os
 
 def get_vestibulares() -> dict:
-    result = {}    
+    result = {} 
     #PARA USO INTERNO
-    #vestibulares = [vestibular for vestibular in sorted(os.listdir("VESTIBULARES"), reverse=True)]  
-    #PARA PRODUÇÃO      
-    vestibulares = [vestibular for vestibular in sorted(os.listdir(os.path.join("Corretor-Uem","VESTIBULARES")), reverse=True)]        
+    #base_dir = os.path.join("VESTIBULARES") 
+    #PARA PRODUÇÃO
+    base_dir = os.path.join("Corretor-Uem","VESTIBULARES") 
+          
+    vestibulares = [vestibular for vestibular in sorted(os.listdir(base_dir), reverse=True)]        
     imgs = [os.path.join("media", vestibular, "img.jpg") for vestibular in vestibulares]    
-    status = [os.path.exists(os.path.join("VESTIBULARES", vestibular, "GABARITOS")) and len(os.listdir(os.path.join("VESTIBULARES", vestibular, "GABARITOS"))) >= 1 for vestibular in vestibulares]
+    status = [os.path.exists(os.path.join(base_dir, vestibular, "GABARITOS")) and len(os.listdir(os.path.join("VESTIBULARES", vestibular, "GABARITOS"))) >= 1 for vestibular in vestibulares]
     status = ["done" if s else "loading" for s in status]
     urls = [vestibular.replace(" ", "-").lower()[4:] for vestibular in vestibulares]
     for vestibular, img, s, url in zip(vestibulares, imgs, status, urls):
