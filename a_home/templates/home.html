@@ -5,8 +5,8 @@
 Corretor Uem
 {% endblock %}
 {% block extra_styles %}
-    <link rel="stylesheet" href="{% static 'all/css/navbar.css'%}">
     <link rel="stylesheet" href="{% static 'a_home/css/home.css'%}">
+    <link rel="stylesheet" href="{% static 'all/css/navbar.css'%}">    
 {% endblock %}
 
 {% block navbar%}
@@ -14,4 +14,17 @@ Corretor Uem
 {% endblock%}
 
 {% block content %}    
+    <div class="vestibulares">
+        {% for vestibular, details in vestibulares.items %}
+            <a href="{% url 'correcao' details.url %}" class="vestibular">
+                <div class="img"> 
+                    <img src="{{ details.img }}" alt="">
+                </div>
+                <div class="description">
+                    <h2>{{ vestibular }}</h2>
+                    <span class="status {{ details.status }}"></span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
 {% endblock %}

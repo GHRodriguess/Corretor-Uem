@@ -2,20 +2,16 @@
 
 .navbar { 
     background-color: #28314e;
-    color: #e2e0e0;
+    color: #ffffff;
     transition: 0.3s all;
 }
 
 .title {
     transition: 0.3s all;
 }
-
-.navbar:hover {  
-    color: #ffffff;
-}
-
 .navbar:hover > .title {
     transform: scale(1.03);
+    font-weight: 750;
 }
 
 @media screen and (max-width: 768px) {

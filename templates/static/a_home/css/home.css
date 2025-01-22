@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.vestibulares {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.vestibular {
+    margin: 20px 10px 0 10px ;
+    width: 80vw;
+    max-width: 500px;
+    height: 80vw;
+    max-height: 500px;
+    border: solid 1px #000000;
+    border-radius: 10px;
+    box-shadow: 10px 10px 6px #1d274736;
+    transition: 0.3s all;
+}
+
+.vestibular:hover {
+    transform: scale(1.03);
+}
+
+.img {
+    width: 100%;
+    height: 85%;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
+    
+}
+
+.img img {
+    width: 100%;
+    height: 100%;
+    object-fit:fill; 
+    object-position: center; 
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    
+}
+
+.description {
+    width: 100%;
+    height: 15%;
+    background-color: #f1f1f1;
+    border-top: 1px solid #000000;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.description h2 {
+    font-family: "Fira Sans", serif;
+    font-size: 1.0rem;
+    font-weight: 600;
+    color: #000000;
+    width: 80%;
+}
+
+.description span {
+    width: 20%;
+    height: 80%;
+    background-repeat: no-repeat;
+    background-size: contain;  
+    background-position: center;  
+}
+
+.done {
+    background-image: url(../src/done.svg);    
+}
+
+.loading {
+    background-image: url(../src/loading.svg);
+}
+
+@media screen and (max-width: 768px) {
+    .description h2 {
+        font-weight: 450;
+    }
+}
+
+@media screen and (min-width: 1024px)  {
+    .vestibulares {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        padding-left: 15px;
+    }
+
+    .description h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+}
