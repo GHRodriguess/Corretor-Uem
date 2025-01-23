@@ -9,21 +9,103 @@
     width: 100%;
 }
 
-.loading-text {
+.loading-text, .head h2{
     font-family: "Lora", serif;
-    font-weight: 700;
+    font-weight: 800;
 }
+
+.head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.head h2 {
+    padding-top: 10%;
+    color: #272727;
+    margin-bottom: 10%;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.main {    
+    display: flex;
+    align-items:flex-start;
+    justify-content: center;   
+    width: 90%;
+    height: 88vh;
+    background-color: #ffffff48;
+    border-radius: 10px;    
+}
+
+.form {
+    display: flex;
+    flex-direction: column;  
+    gap: 0.8rem; 
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    height: 80%;
+}
+
+.form label {
+    font-family: "Lora", serif;
+    font-size: 1rem;
+    color: #000000;
+    font-weight: 600;
+}
+
+.form-select {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #000000;
+    transition: border-color 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.submit-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #fff;
+    background: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+    background: #0056b3;
+}
+
 
 @media screen and (max-width: 768px) {
     .loading-text {
         font-size: 1.2rem;
-
+    }
+    .head h2 {
+        font-size: 2rem;
     }
 }
 
 @media screen and (min-width: 1024px) {
-    .loading-text {
+    .loading-text{
         font-size: 2.3rem;
-
+    }
+    .head h2 {
+        font-size: 3rem;
     }
 }

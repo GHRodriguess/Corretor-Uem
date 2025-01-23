@@ -17,5 +17,32 @@
             <div class="loading">
                 <span class="loading-text">O GABARITO AINDA NÃO FOI LIBERADO</span>
             </div>
+    {% else %}
+        <div class="head">
+            <h2>{{ vestibular }}</h2>
+        </div>
+        <div class="main">        
+            <form class="form" hx-post="{% url 'questions' vestibular_url %}" hx-target=".main" hx-swap="innerHTML">
+                {% csrf_token  %}
+                <label for="selecao-linguagem">Defina o seu idioma escolhido:</label>
+                <select class="form-select" name="linguagem" id="selecao-linguagem">
+                    <option value="en">Inglês</option>
+                    <option value="es">Espanhol</option>
+                    <option value="fr">Frânces</option>
+                </select>
+
+                {% if serie %}
+                <label for="selecao-serie">Defina a série escolhida:</label>
+                <select class="form-select" name="serie" id="selecao-serie">
+                    <option value="1">1º Série</option>
+                    <option value="2">2º Série</option>
+                </select>
+                {% endif %}
+                <button class="submit-button" type="submit">Enviar</button>
+            </form>        
+        </div>     
     {% endif %}
+    
+    
+
 {% endblock %}
