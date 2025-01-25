@@ -2,8 +2,7 @@ from django.shortcuts import render
 from .utils import *
 from collections import Counter
 
-def questions(request, vestibular):    
-    request.session.clear()
+def questions(request, vestibular):  
     context = {}    
     if request.method == "POST":
         vestibular_url = vestibular
