@@ -1,0 +1,12 @@
+<form class="alternativas" hx-post="{% url 'question' numero_questao %}" hx-trigger="click" hx-target="this" hx-swap="outerHTML">
+    {% csrf_token %}    
+    <button type="submit" class="{% if class.1 %}{{ class.1 }}{% else %}alternativa{% endif %}" name="value" value="1">1</button>
+    <button type="submit" class="{% if class.2 %}{{ class.2 }}{% else %}alternativa{% endif %}" name="value" value="2">2</button>
+    <button type="submit" class="{% if class.4 %}{{ class.4 }}{% else %}alternativa{% endif %}" name="value" value="4">4</button>
+    <button type="submit" class="{% if class.8 %}{{ class.8 }}{% else %}alternativa{% endif %}"name="value" value="8">8</button>
+    <button type="submit" class="{% if class.16 %}{{ class.16 }}{% else %}alternativa{% endif %}"name="value" value="16">16</button>
+    <div class="div-soma">
+        <span class="soma">{% if soma %}{{ soma }}{% else %}{{ 0 }}{% endif %}</span>
+    </div>
+    <input type="hidden" name="alternativas_marcadas" id="alternativas_marcadas" value="{% if alternativas_marcadas %} {{ alternativas_marcadas}} {% else %}[]{% endif %}">
+</form>
