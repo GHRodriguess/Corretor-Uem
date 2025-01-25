@@ -65,7 +65,6 @@ def atualiza_nota(request):
     context = {}
     notas = request.session.get("notas", {})
     contagem = dict(Counter(notas.values()))
-    print(contagem)
     soma_total = sum(notas.values())
     context["contagem"] = contagem 
     context["soma_total"] = soma_total

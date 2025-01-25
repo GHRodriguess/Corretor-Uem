@@ -2,8 +2,7 @@ from django.shortcuts import render
 from .utils import *
 
 # Create your views here.
-def correcao(request, vestibular: str):  
-    print(1)      
+def correcao(request, vestibular: str):   
     context = {}    
     vestibular_url = vestibular
     vestibular = vestibular.replace("-", " ").upper()
