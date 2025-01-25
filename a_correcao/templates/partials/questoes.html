@@ -3,7 +3,7 @@
         {% include "partials/questao.html" %}
     </div>
         
-    <button class="btn-notas" hx-get="{% url 'nota' %}" hx-trigger="click" hx-target="#resumo" hx-swap="outerHTML">Atualizar Nota</button>
+    <button class="btn-notas" hx-trigger="click" hx-target="#resumo" hx-swap="outerHTML">Atualizar Nota</button>
     <div class="resumo" id="resumo">
 
     </div>
