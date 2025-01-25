@@ -3,18 +3,17 @@ from .utils import *
 from collections import Counter
 
 def questions(request, vestibular):  
-    context = {}    
-    if request.method == "POST":
-        vestibular_url = vestibular
-        vestibular = vestibular.replace("-", " ").upper()
-        o_vestibular = Vestibular(vestibular)
-        lingua = request.POST.get("linguagem", None)
-        serie = request.POST.get("serie", None)        
-        gabarito = o_vestibular.define_gabarito(lingua, serie)
-        context['vestibular'] = vestibular
-        context['vestibular_url'] = vestibular_url
-        context["gabarito"] = gabarito        
-        request.session["gabarito"] = gabarito
+    context = {} 
+    vestibular_url = vestibular
+    vestibular = vestibular.replace("-", " ").upper()
+    o_vestibular = Vestibular(vestibular)
+    lingua = request.POST.get("linguagem", None)
+    serie = request.POST.get("serie", None)        
+    gabarito = o_vestibular.define_gabarito(lingua, serie)
+    context['vestibular'] = vestibular
+    context['vestibular_url'] = vestibular_url
+    context["gabarito"] = gabarito        
+    request.session["gabarito"] = gabarito
         
     return render(request, "partials/questoes.html", context)
 
