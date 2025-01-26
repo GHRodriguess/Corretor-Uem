@@ -98,13 +98,56 @@ main {
     align-items: center;  
 }
 
-.questao {
+.mostra-resposta {
+    font-family: "Lora", serif;
+    font-size: 1rem;
+    color: #000000;
+    font-weight: 600;
+}
+
+.form-checkbox { 
+    margin-left: 5%;
+}
+
+.checkbox {
+    width: 1.6rem;
+    height: 1.5rem;
+    border: 2px solid #000000;
+    border-radius: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s all;
+    appearance: none;    
+}
+
+.checkbox:hover {
+    transform: scale(1.05);
+}
+
+.checkbox:checked{
+    background-color: #000000;
+}
+
+.checkbox:checked::after {
+    content: "✓";
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+.questao, .funcoes {
     display: flex;
     align-items: center;
     justify-content: space-around;    
     width: 70%;
     max-width: 450px;      
     margin-bottom: 0.8rem;
+}
+
+.funcoes {
+    justify-content: start;
 }
 
 .numero {
@@ -142,6 +185,7 @@ main {
     transform: scale(1.1);
 } 
 
+
 .marcado.certa{
     background-color: rgb(74,255,177);
     border-color: rgb(74,255,177);
@@ -152,6 +196,14 @@ main {
     background-color: rgba(227, 4, 4, 0.72);
     border-color: rgba(227, 4, 4, 0.72);
     color: #000000;
+}
+
+.mostra-resposta.certa {
+    border: 3px solid  rgb(74,255,177);
+}
+
+.mostra-resposta.errada {
+    border: 3px solid rgba(227, 4, 4, 0.72);     
 }
 
 .div-soma {
@@ -203,6 +255,9 @@ p {
     .head a {
         font-size: 1.65rem;
     }
+    .mostra-resposta{
+        font-size: 1rem;
+    }
 
     .numero {
         font-size: 1.3rem;
@@ -233,6 +288,9 @@ p {
     }
     .head a {
         font-size: 3rem;
+    }
+    .mostra-resposta{
+        font-size: 1.2rem;
     }
     .numero {
         font-size: 1.5rem;

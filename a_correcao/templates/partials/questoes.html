@@ -1,15 +1,21 @@
 
 <div class="questoes">
+    <div class="funcoes">
+        <label class="mostra-resposta" for="mostra-resposta">MOSTRAR RESPOSTAS CORRETAS</label>
+        <form class="form-checkbox" hx-post="{% url 'mostra_respostas' %}" hx-target=".main" hx-swap="innerHTML" hx-trigger="change" >
+            {% csrf_token %}
+            <input class="checkbox" type="checkbox" name="mostra-resposta" id="mostra-resposta" {% if ativa %}checked{% endif %}>
+        </form>
+    </div>
     {% for questao in gabarito %}
         <div class="questao">
-            <span class="numero">{{ forloop.counter }}.</span>               
-            {% with numero_questao=forloop.counter  %}
+            <span class="numero">{{ forloop.counter }}.</span> 
+            {% with numero_questao=forloop.counter class=request.session.classes|slice:forloop.counter|last alternativas_marcadas=request.session.alternativas_marcadas|slice:forloop.counter|last soma=request.session.somas|slice:forloop.counter|last mostra_respostas=mostra_respostas %}
                 {% include "partials/questao.html" %}
             {% endwith %}                    
         </div>
     {% endfor %}    
     <button class="btn-notas" hx-get="{% url 'nota' %}" hx-trigger="click" hx-target="#resumo" hx-swap="outerHTML">Atualizar Nota</button>
     <div class="resumo" id="resumo">
-
     </div>
 </div>

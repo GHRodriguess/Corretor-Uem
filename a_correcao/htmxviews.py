@@ -2,8 +2,7 @@ from django.shortcuts import render
 from .utils import *
 from collections import Counter
 
-def questions(request, vestibular):    
-    request.session.clear()
+def questions(request, vestibular): 
     context = {}    
     if request.method == "POST":
         vestibular_url = vestibular
@@ -16,7 +15,33 @@ def questions(request, vestibular):
         context['vestibular_url'] = vestibular_url
         context["gabarito"] = gabarito        
         request.session["gabarito"] = gabarito
+        classes = define_classes_alternativas(gabarito)
+        request.session["classes"] = classes
+        request.session["alternativas_marcadas"] = [[] for _ in gabarito]
+        request.session["somas"] = [0 for _ in gabarito] 
         
+    return render(request, "partials/questoes.html", context)
+
+def mostra_respostas(request):
+    context = {}    
+    if request.method == "POST":
+        gabarito = request.session.get("gabarito", [])
+        context["gabarito"] = gabarito
+        mostra_resposta =  True if request.POST.get("mostra-resposta") == "on" else False
+        request.session["mostra-resposta"] = mostra_resposta        
+        if mostra_resposta:
+            context["ativa"] = True
+            
+        classes = request.session["classes"]        
+        for i, classe in enumerate(classes):
+            for j, alternativa in classe.items():               
+                if mostra_resposta:                    
+                    if "mostra-resposta" not in alternativa:
+                        classes[i][j] += "mostra-resposta"
+                else:
+                    if "mostra-resposta" in alternativa: 
+                        classes[i][j]  = alternativa.replace("mostra-resposta", "")
+        request.session["classes"] = classes    
     return render(request, "partials/questoes.html", context)
 
 def question(request, numero_questao):
@@ -24,7 +49,8 @@ def question(request, numero_questao):
     context["numero_questao"] = numero_questao
     numero_questao = int(numero_questao)
     alternativas_marcadas = request.POST.get("alternativas_marcadas", "[]")    
-    alternativas_marcadas = eval(alternativas_marcadas)    
+    alternativas_marcadas = eval(alternativas_marcadas)   
+    request.session["alternativas_marcadas"][numero_questao - 1] = alternativas_marcadas
     alternativa_clicada = request.POST.get("value", "[]")
     alternativa_clicada = int(alternativa_clicada)
     if alternativa_clicada not in alternativas_marcadas:
@@ -34,6 +60,7 @@ def question(request, numero_questao):
     alternativas_marcadas.sort()
     context["alternativas_marcadas"] = alternativas_marcadas   
     context["soma"] = sum(alternativas_marcadas)
+    request.session["somas"][numero_questao - 1] = sum(alternativas_marcadas)
     soma_correta =  request.session.get("gabarito", [])[numero_questao - 1]
     alternativas_corretas = soma_to_list(soma_correta)  
     
@@ -41,29 +68,29 @@ def question(request, numero_questao):
         nota = 6
         zerou = False
     else:          
-        nota, zerou = calcular_nota(alternativas_corretas, alternativas_marcadas)       
-    
-    if zerou:
-        alternativas_corretas = []
-        alternativas_marcadas = [1,2,4,8,16]
+        nota, zerou = calcular_nota(alternativas_corretas, alternativas_marcadas) 
+
     if soma_correta == "ANULADA":
         alternativas_corretas = [1,2,4,8,16]
         
     notas = request.session.get("notas", {})
     notas[str(numero_questao)] = nota  
-    request.session["notas"] = notas
-
+    request.session["notas"] = notas 
+    
+    mostra_resposta = request.session.get("mostra-resposta", False)       
+    request.session["classes"][numero_questao - 1] = {}
     context["class"] = {}
     for alternativa in [1,2,4,8,16]:   
-        context["class"][alternativa] = f"alternativa {'certa' if alternativa in alternativas_corretas else 'errada'} {'marcado' if alternativa in alternativas_marcadas else ''}"     
+        classe = f"alternativa {'certa' if alternativa in alternativas_corretas else 'errada'} {'marcado' if alternativa in alternativas_marcadas else ''} {'mostra-resposta' if mostra_resposta else ''}"     
+        context["class"][alternativa] = classe
+        request.session["classes"][numero_questao - 1][alternativa] = classe
     
-    
-        
     return render(request, "partials/questao.html", context)
 
 def atualiza_nota(request):
     context = {}
     notas = request.session.get("notas", {})
+    print(notas)
     contagem = dict(Counter(notas.values()))
     soma_total = sum(notas.values())
     context["contagem"] = contagem 
