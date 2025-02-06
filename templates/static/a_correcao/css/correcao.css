@@ -188,12 +188,10 @@ main {
     transition: all 0.3s; 
 }
 
-@media screen and (min-width: 1024px) {
-    .alternativa:hover {
-        background-color: #d6d6d6;
-        transform: scale(1.1);
-    } 
-}
+.alternativa:hover {
+    background-color: #d6d6d6;
+    transform: scale(1.1);
+} 
 
 
 .marcado.certa{
