@@ -19,23 +19,94 @@ class Vestibular():
     def define_serie_necessaria(self):
         return True if "PAS" in self.vestibular else False
 
-    def define_gabarito(self, lingua, serie=None):
+    def define_gabarito(self, lingua, serie=None, curso=None):
         self.gabarito = []
         linguas = {
             "en": "Inglês",
             "es": "Espanhol",
             "fr": "Francês"
         }
-        lingua = linguas[lingua]
+        cursos_especificas = {
+            "administracao": "História, Matemática",
+            "agronomia": "Biologia, Química",
+            "arquitetura e urbanismo": "Arte, Matemática",
+            "artes cenicas": "Arte, História",
+            "artes visuais": "Arte, História",
+            "biomedicina": "Biologia, Química",
+            "bioquimica": "Biologia, Química",
+            "biotecnologia": "Biologia, Química",
+            "ciencia da computacao": "Física, Matemática",
+            "ciencias biologicas": "Biologia, Química",
+            "ciencias contabeis": "História, Matemática",
+            "ciencias economicas": "História, Matemática",
+            "ciencias sociais": "História, Sociologia",
+            "comunicacao e multimeios": "Arte, Sociologia",
+            "design": "Arte, Matemática",
+            "direito": "Arte, Sociologia",
+            "educacao fisica": "Educação Física, História",
+            "enfermagem": "Biologia, Sociologia",
+            "engenharia agricola": "Física, Matemática",
+            "engenharia ambiental": "Física, Matemática",
+            "engenharia civil": "Física, Matemática",
+            "engenharia de alimentos": "Física, Química",
+            "engenharia de producao": "Física, Matemática",
+            "engenharia eletrica": "Física, Matemática",
+            "engenharia mecanica": "Física, Matemática",
+            "engenharia quimica": "Matemática, Química",
+            "engenharia textil": "Matemática, Química",
+            "estatistica": "Física, Matemática",
+            "farmacia": "Biologia, Química",
+            "filosofia": "Filosofia, História",
+            "fisica": "Física, Matemática",
+            "fisica bach em fisica medica": "Física, Matemática",
+            "geografia": "Geografia, Matemática",
+            "historia": "Geografia, História",
+            "informatica": "Física, Matemática",
+            "letras": "Filosofia, História",
+            "matematica": "Física, Matemática",
+            "medicina": "Biologia, Química",
+            "medicina veterinaria": "Biologia, Química",
+            "moda": "História, Matemática",
+            "musica": "Arte, História",
+            "odontologia": "Biologia, Química",
+            "pedagogia": "Geografia, História",
+            "psicologia": "Biologia, História",
+            "quimica": "Matemática, Química",
+            "secretariado executivo trilingue": "História, Sociologia",
+            "servico social": "História, Sociologia",
+            "tecnologia em alimentos": "Física, Química",
+            "tecnologia em construcao civil": "Física, Matemática",
+            "tecnologia em meio ambiente": "Matemática, Química",
+            "zootecnia": "Biologia, Matemática"
+        }      
+        lingua = linguas[lingua] 
         if "PAS" in self.vestibular:
-            with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, f"Gabarito {serie}º Ano.txt"), "r") as arquivo:
-                conteudo = arquivo.read()
-                conteudo = conteudo.split("\n")
-                self.gabarito.extend(conteudo)
-            with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, "LINGUAS", f"{lingua}.txt"), "r") as arquivo:
-                conteudo = arquivo.read()
-                conteudo = conteudo.split("\n")
-                self.gabarito.extend(conteudo)
+            if serie == "3":
+                with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, f"Gabarito {serie}º Ano.txt"), "r") as arquivo:
+                    conteudo = arquivo.read()
+                    conteudo = conteudo.split("\n")
+                    self.gabarito.extend(conteudo)
+                with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, "LINGUAS", f"{lingua}.txt"), "r") as arquivo:
+                    conteudo = arquivo.read()
+                    conteudo = conteudo.split("\n")
+                    self.gabarito.extend(conteudo)
+                especificas = cursos_especificas[curso].split(",")
+                for materia_especifica in especificas:
+                    materia_especifica = materia_especifica.strip()
+                    print(materia_especifica)
+                    with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, "ESPECÍFICAS", f"{materia_especifica}.txt"), "r") as arquivo:
+                        conteudo = arquivo.read()
+                        conteudo = conteudo.split("\n")
+                        self.gabarito.extend(conteudo)
+            else:  
+                with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, f"Gabarito {serie}º Ano.txt"), "r") as arquivo:
+                    conteudo = arquivo.read()
+                    conteudo = conteudo.split("\n")
+                    self.gabarito.extend(conteudo)
+                with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, "LINGUAS", f"{lingua}.txt"), "r") as arquivo:
+                    conteudo = arquivo.read()
+                    conteudo = conteudo.split("\n")
+                    self.gabarito.extend(conteudo)
         else:
             with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", f"Gabarito.txt"), "r") as arquivo:
                 conteudo = arquivo.read()

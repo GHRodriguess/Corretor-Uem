@@ -32,13 +32,15 @@
                 </select>
 
                 {% if serie %}
-                <label for="selecao-serie">Defina a série escolhida:</label>
-                <select class="form-select" name="serie" id="selecao-serie">
-                    <option value="1">1º Série</option>
-                    <option value="2">2º Série</option>
-                </select>
+                    {% include 'partials/serie.html' %}
                 {% endif %}
+                <div class="cursos">
+                    {% include 'partials/cursos.html' %}
+                </div>
+
+
                 <button class="submit-button" type="submit">Enviar</button>
+
             </form>        
         </div>     
     {% endif %}

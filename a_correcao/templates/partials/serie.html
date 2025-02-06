@@ -1,0 +1,6 @@
+<label for="selecao-serie">Defina a série escolhida:</label>
+<select hx-post="{% url 'cursos' %}" hx-target=".cursos" hx-swap="innerHTML" class="form-select" name="serie" id="selecao-serie">
+    <option value="1">1º Série</option>
+    <option value="2">2º Série</option>
+    <option value="3">3º Série</option>
+</select>

@@ -53,6 +53,14 @@ main {
     height: 80%;
 }
 
+.cursos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+}
+
+
 .form label {
     font-family: "Lora", serif;
     font-size: 1rem;
