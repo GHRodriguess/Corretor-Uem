@@ -103,8 +103,7 @@ def question(request, numero_questao):
 
 def atualiza_nota(request):
     context = {}
-    notas = request.session.get("notas", {})
-    print(notas)
+    notas = request.session.get("notas", {}) 
     contagem = dict(Counter(notas.values()))
     soma_total = sum(notas.values())
     context["contagem"] = contagem

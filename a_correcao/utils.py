@@ -92,8 +92,7 @@ class Vestibular():
                     self.gabarito.extend(conteudo)
                 especificas = cursos_especificas[curso].split(",")
                 for materia_especifica in especificas:
-                    materia_especifica = materia_especifica.strip()
-                    print(materia_especifica)
+                    materia_especifica = materia_especifica.strip()                    
                     with open(os.path.join(self.base_dir, self.vestibular, "GABARITOS", serie, "ESPECÍFICAS", f"{materia_especifica}.txt"), "r") as arquivo:
                         conteudo = arquivo.read()
                         conteudo = conteudo.split("\n")
