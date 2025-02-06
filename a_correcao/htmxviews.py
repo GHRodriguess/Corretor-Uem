@@ -107,5 +107,5 @@ def atualiza_nota(request):
     contagem = dict(Counter(notas.values()))
     soma_total = sum(notas.values())
     context["contagem"] = contagem
-    context["soma_total"] = soma_total
+    context["soma_total"] = round(soma_total, 1)
     return render(request, "partials/resumo.html", context)
