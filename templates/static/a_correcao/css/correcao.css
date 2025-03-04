@@ -11,7 +11,8 @@
 
 .loading-text, .head a{
     font-family: "Lora", serif;
-    font-weight: 800;
+    font-weight: 800; 
+    text-align: center;   
 }
 
 .head {
@@ -24,6 +25,7 @@
     padding-top: 10%;
     color: #272727;
     margin-bottom: 10%;
+    text-align: center;
 }
 
 main {
