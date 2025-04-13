@@ -146,8 +146,8 @@ def define_classes_alternativas(gabarito, mostra_respostas=False):
         else:
             alternativas_corretas = soma_to_list(soma_correta)                  
         classe = {}
-        for alternativa in [1,2,4,8,16]:   
-            classe[alternativa] = f"alternativa {'certa' if alternativa in alternativas_corretas else 'errada'} {'mostra-resposta' if mostra_respostas else ''}"     
+        for alternativa in [1,2,4,8,16]:               
+            classe[alternativa] = f"alternativa {'certa' if str(alternativa) in alternativas_corretas else 'errada'} {'mostra-resposta' if mostra_respostas else ''}"     
         classes.append(classe)
             
     return classes
