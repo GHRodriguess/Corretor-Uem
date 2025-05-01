@@ -17,7 +17,7 @@ def questions(request, vestibular):
         context["vestibular_url"] = vestibular_url
         context["gabarito"] = gabarito
         request.session["gabarito"] = gabarito
-        classes = define_classes_alternativas(gabarito)
+        classes = define_classes_alternativas(gabarito)        
         request.session["classes"] = classes
         request.session["alternativas_marcadas"] = [[] for _ in gabarito]
         request.session["somas"] = [0 for _ in gabarito]
@@ -38,15 +38,16 @@ def mostra_respostas(request):
     context = {}
     if request.method == "POST":
         gabarito = request.session.get("gabarito", [])
-        context["gabarito"] = gabarito
-        mostra_resposta = True if request.POST.get("mostra-resposta") == "on" else False
+        context["gabarito"] = gabarito        
+        mostra_resposta = True if request.POST.get("mostra-resposta") == "on" else False        
         request.session["mostra-resposta"] = mostra_resposta
         if mostra_resposta:
             context["ativa"] = True
 
-        classes = request.session["classes"]
+        classes = request.session["classes"]        
         for i, classe in enumerate(classes):
             for j, alternativa in classe.items():
+                
                 if mostra_resposta:
                     if "mostra-resposta" not in alternativa:
                         classes[i][j] += "mostra-resposta"
