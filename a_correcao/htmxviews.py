@@ -76,13 +76,14 @@ def question(request, numero_questao):
     context["soma"] = sum(alternativas_marcadas)
     request.session["somas"][numero_questao - 1] = sum(alternativas_marcadas)
     soma_correta = request.session.get("gabarito", [])[numero_questao - 1]
-    alternativas_corretas = soma_to_list(soma_correta)
-
+    alternativas_corretas = soma_to_list(soma_correta)   
+    print(alternativas_corretas) 
     if soma_correta == "ANULADA":
         nota = 6
         zerou = False
-    else:
+    else:        
         nota, zerou = calcular_nota(alternativas_corretas, alternativas_marcadas)
+    
 
     if soma_correta == "ANULADA":
         alternativas_corretas = [1, 2, 4, 8, 16]
