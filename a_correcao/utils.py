@@ -61,7 +61,7 @@ class Vestibular():
             "fisica bach em fisica medica": "Física, Matemática",
             "geografia": "Geografia, Matemática",
             "historia": "Geografia, História",
-            "informatica": "Física, Matemática",
+            "engenharia de software": "Física, Matemática",
             "letras": "Filosofia, História",
             "matematica": "Física, Matemática",
             "medicina": "Biologia, Química",

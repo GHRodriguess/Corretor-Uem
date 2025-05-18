@@ -77,7 +77,6 @@ def question(request, numero_questao):
     request.session["somas"][numero_questao - 1] = sum(alternativas_marcadas)
     soma_correta = request.session.get("gabarito", [])[numero_questao - 1]
     alternativas_corretas = soma_to_list(soma_correta)   
-    print(alternativas_corretas) 
     if soma_correta == "ANULADA":
         nota = 6
         zerou = False
