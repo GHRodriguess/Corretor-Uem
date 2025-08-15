@@ -11,6 +11,7 @@ import PasYearSelectionPage from '../pages/PasYearSelectionPage';
 import PasSerieSelectionPage from '../pages/PasSerieSelectionPage';
 import LanguageSelectionPage from '../pages/LanguageSelectionPage';
 import CorrectorPage from '../pages/CorrectorPage';
+import AddVestibularPage from '../pages/AddVestibularPage';
 
 function App() {
     return (
@@ -20,7 +21,7 @@ function App() {
                 
 
                 {/* Container para o conteúdo da página */}
-                <main className="flex-grow bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-6 flex flex-col items-center justify-center">
+                <main className="flex-grow h-full bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-3 flex flex-col items-center justify-center">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/vestibulares" element={<VestibularesPage />} />                        
@@ -28,6 +29,7 @@ function App() {
                         <Route path="/pas/:pasYear/serie" element={<PasSerieSelectionPage />} />                        
                         <Route path="/selecionar-idioma/:vestibularName" element={<LanguageSelectionPage />} />
                         <Route path="/corretor/:vestibularName/:languageName" element={<CorrectorPage />} />
+                        <Route path="/add/vestibulares" element={<AddVestibularPage />} />
                     </Routes>
                 </main>
             </div>
