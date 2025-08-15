@@ -61,7 +61,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
-    'https://corretoruem.vercel.app'
+    'https://corretoruem.vercel.app',
+    'https://corretoruem-git-react-ghrodriguess-projects.vercel.app',
 ]
 
 ROOT_URLCONF = 'api_corretor_uem.urls'
