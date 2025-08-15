@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 
 function AddVestibularPage() {
-    // Estado para armazenar os dados do vestibular (nome, ano e tipo).
     const [vestibular, setVestibular] = useState(null);
-    // Estado para armazenar a lista de todas as questões adicionadas.
     const [questoes, setQuestoes] = useState([]);
-    // Estado para a questão sendo configurada no momento.
     const [currentQuestion, setCurrentQuestion] = useState(null);
-    // Índice da questão atual sendo exibida.
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    // Novos estados para exibir mensagens de erro e sucesso na tela.
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const [tipo, setTipo] = useState('vestibular');
+    const [serie, setSerie] = useState('1');
 
-    // Inicializa o estado da primeira questão quando o vestibular é definido.
     useEffect(() => {
         if (vestibular && questoes.length === 0 && currentQuestion === null) {
             setCurrentQuestion({
@@ -29,9 +25,8 @@ function AddVestibularPage() {
         }
     }, [vestibular, questoes, currentQuestion]);
 
-    // Função que fará a chamada POST para a sua API.
-    const enviarDadosParaAPI = async (payload) => {        
-        const url = 'http://localhost:8000/api/adiciona_vestibular';
+    const enviarDadosParaAPI = async (payload) => {
+        const url = import.meta.env.VITE_BASE_URL_API + 'adiciona_vestibular';
 
         try {
             const response = await fetch(url, {
@@ -52,21 +47,23 @@ function AddVestibularPage() {
             throw error;
         }
     };
-    
-    // Função para salvar o nome, ano e tipo do vestibular.
+
     const handleSalvarVestibular = (e) => {
         e.preventDefault();
-        setVestibular({
-            nome: e.target.nome.value,
-            ano: e.target.ano.value,
-            tipo: e.target.tipo.value,
-        });
-        // Limpa as mensagens de erro/sucesso ao começar um novo formulário.
+        const nome = e.target.nome.value;
+        const ano = e.target.ano.value;
+        const tipoProva = e.target.tipo.value;
+        const dadosVestibular = { nome, ano, tipo: tipoProva };
+
+        if (tipoProva === 'pas') {
+            dadosVestibular.serie = e.target.serie.value;
+        }
+
+        setVestibular(dadosVestibular);
         setError(null);
         setSuccessMessage(null);
     };
 
-    // Salva a questão atual e avança para a próxima.
     const handleAvancar = () => {
         if (!currentQuestion) return;
         setError(null);
@@ -75,16 +72,13 @@ function AddVestibularPage() {
         const questaoParaSalvar = { ...currentQuestion };
 
         if (currentQuestionIndex >= questoes.length) {
-            // Adiciona uma nova questão se for a última.
             setQuestoes([...questoes, questaoParaSalvar]);
         } else {
-            // Atualiza a questão existente se estiver editando.
             const newQuestoes = [...questoes];
             newQuestoes[currentQuestionIndex] = questaoParaSalvar;
             setQuestoes(newQuestoes);
         }
 
-        // Move para a próxima questão ou cria uma nova.
         const newIndex = currentQuestionIndex + 1;
         setCurrentQuestionIndex(newIndex);
         if (newIndex < questoes.length) {
@@ -103,12 +97,10 @@ function AddVestibularPage() {
         }
     };
 
-    // Volta para a questão anterior.
     const handleVoltar = () => {
         if (currentQuestionIndex > 0) {
             setError(null);
             setSuccessMessage(null);
-            // Salva o estado atual antes de voltar.
             const newQuestoes = [...questoes];
             newQuestoes[currentQuestionIndex] = currentQuestion;
             setQuestoes(newQuestoes);
@@ -137,8 +129,6 @@ function AddVestibularPage() {
         try {
             await enviarDadosParaAPI({ vestibular, questoes });
 
-            // Se a requisição for bem-sucedida, exibe a mensagem de sucesso
-            // e reseta o estado da aplicação.
             setSuccessMessage("Dados salvos com sucesso!");
             setError(null);
             setVestibular(null);
@@ -146,8 +136,6 @@ function AddVestibularPage() {
             setCurrentQuestion(null);
             setCurrentQuestionIndex(0);
         } catch (error) {
-            // Se a requisição falhar, exibe uma mensagem de erro.
-            // O estado da aplicação não é alterado, mantendo os dados.
             if (error.message.includes("duplicate key value")) {
                 setError("Já existe um vestibular com o mesmo nome e ano. Por favor, corrija e tente novamente.");
             } else {
@@ -177,14 +165,12 @@ function AddVestibularPage() {
                     Configuração de Gabaritos
                 </h1>
 
-                {/* Exibe a mensagem de erro se o estado 'error' não for nulo */}
                 {error && (
                     <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mb-6 text-center">
                         <p className="font-medium">{error}</p>
                     </div>
                 )}
 
-                {/* Exibe a mensagem de sucesso se o estado 'successMessage' não for nulo */}
                 {successMessage && (
                     <div className="bg-green-900 border border-green-700 text-green-200 p-4 rounded-lg mb-6 text-center">
                         <p className="font-medium">{successMessage}</p>
@@ -209,12 +195,35 @@ function AddVestibularPage() {
                             <select
                                 id="tipo"
                                 required
+                                value={tipo}
+                                onChange={(e) => setTipo(e.target.value)}
                                 className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                             >
                                 <option value="vestibular">Vestibular</option>
                                 <option value="pas">PAS</option>
                             </select>
                         </div>
+                        {tipo === 'pas' && (
+                            <div>
+                                <label
+                                    htmlFor="serie"
+                                    className="block text-sm font-medium text-gray-400"
+                                >
+                                    Série do PAS
+                                </label>
+                                <select
+                                    id="serie"
+                                    required
+                                    value={serie}
+                                    onChange={(e) => setSerie(e.target.value)}
+                                    className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                                >
+                                    <option value="1">1ª Série</option>
+                                    <option value="2">2ª Série</option>
+                                    <option value="3">3ª Série</option>
+                                </select>
+                            </div>
+                        )}
                         <div>
                             <label
                                 htmlFor="nome"
@@ -253,8 +262,8 @@ function AddVestibularPage() {
                 ) : (
                     <div className="space-y-6">
                         <h2 className="text-2xl font-semibold text-gray-50 mb-4 text-center">
-                            Adicionar Questões: {vestibular.nome} (
-                            {vestibular.ano})
+                            Adicionar Questões: {vestibular.nome} ({vestibular.ano})
+                            {vestibular.tipo === 'pas' && ` - ${vestibular.serie}ª Série`}
                         </h2>
 
                         {currentQuestion && (
@@ -294,7 +303,7 @@ function AddVestibularPage() {
 
                                 {currentQuestion.eh_idioma ? (
                                     <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        {["espanhol", "frances", "ingles"].map(
+                                        {["espanhol", "frances", "ingles",].map(
                                             (idioma) => (
                                                 <div key={idioma}>
                                                     <label
@@ -327,13 +336,13 @@ function AddVestibularPage() {
                                                                     {
                                                                         ...currentQuestion,
                                                                         respostas_idioma:
-                                                                            {
-                                                                                ...currentQuestion.respostas_idioma,
-                                                                                [idioma]:
-                                                                                    e
-                                                                                        .target
-                                                                                        .value,
-                                                                            },
+                                                                        {
+                                                                            ...currentQuestion.respostas_idioma,
+                                                                            [idioma]:
+                                                                                e
+                                                                                    .target
+                                                                                    .value,
+                                                                        },
                                                                     }
                                                                 )
                                                             }

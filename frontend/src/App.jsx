@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 
 /* COMPONENTES DE PÁGINA */
@@ -12,6 +11,7 @@ import PasSerieSelectionPage from '../pages/PasSerieSelectionPage';
 import LanguageSelectionPage from '../pages/LanguageSelectionPage';
 import CorrectorPage from '../pages/CorrectorPage';
 import AddVestibularPage from '../pages/AddVestibularPage';
+import ViewVestibularesPage from '../pages/ViewVestibularesPage';
 
 function App() {
     return (
@@ -30,6 +30,8 @@ function App() {
                         <Route path="/selecionar-idioma/:vestibularName" element={<LanguageSelectionPage />} />
                         <Route path="/corretor/:vestibularName/:languageName" element={<CorrectorPage />} />
                         <Route path="/add/vestibulares" element={<AddVestibularPage />} />
+                        <Route path="/view/vestibulares" element={<ViewVestibularesPage />} />
+                        
                     </Routes>
                 </main>
             </div>

@@ -3,10 +3,10 @@ from .models import Vestibular, Questao, GabaritoIdioma
 
 @admin.register(Vestibular)
 class VestibularAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'ano', 'tipo',)
+    list_display = ('nome', 'ano', 'tipo', 'serie')
     search_fields = ('nome', 'ano',)
-    list_filter = ('ano',)
-    ordering = ('-id',)
+    list_filter = ('tipo' ,'ano',)
+    ordering = ('-ano' , '-nome','-id',)
 
 @admin.register(Questao)
 class QuestaoAdmin(admin.ModelAdmin):
