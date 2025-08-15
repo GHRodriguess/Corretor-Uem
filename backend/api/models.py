@@ -10,7 +10,7 @@ class Vestibular(models.Model):
     
     nome = models.CharField(max_length=100)
     ano = models.IntegerField()
-    tipo = models.CharField(choices=TIPO_CHOICES, default='VESTIBULAR')
+    tipo = models.CharField(len=50 ,choices=TIPO_CHOICES, default='VESTIBULAR')
     serie = models.IntegerField(null=True, blank=True) 
     
     def __str__(self):
