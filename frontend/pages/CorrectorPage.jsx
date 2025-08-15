@@ -73,7 +73,7 @@ function CorrectorPage(){
                 }
 
                 const numerosSoma = somaToList(valor);
-
+                console.log(numerosSoma, numerosSoma.reduce((a, b) => a + b, 0))
                 gabaritoFormatado[item.numero] = numerosSoma;
             });
 
@@ -112,6 +112,7 @@ function CorrectorPage(){
             
             return "ANULADA";
         }
+        
     }
 
     const languageMap = {
@@ -210,35 +211,57 @@ function CorrectorPage(){
     const calculateScore = () => {
         let totalObjectiveScore = 0;
         const feedback = {};
+
         for (const qNumber in gabarito) {
             const correctOptions = gabarito[qNumber];
             const userSelectedValues = selectedAnswers[qNumber] || [];
-            const userSelectedCorrect = userSelectedValues.filter(val => correctOptions.includes(val));
-            const userSelectedIncorrect = userSelectedValues.filter(val => !correctOptions.includes(val));
-            const correctButMissed = correctOptions.filter(val => !userSelectedValues.includes(val));
 
             let questionScore = 0;
-            if (userSelectedIncorrect.length > 0) {
-                questionScore = 0;
+            const isAnulada = correctOptions === "ANULADA";
+
+            if (isAnulada) {
+                questionScore = 6;
+                feedback[qNumber] = {
+                    score: questionScore,
+                    userSelectedCorrect: [],
+                    userSelectedIncorrect: [],
+                    correctButMissed: [],
+                    isAnulada: true
+                };
             } else {
-                const totalCorrect = correctOptions.length;
-                if (totalCorrect === 0) {
-                    questionScore = userSelectedValues.length === 0 ? 6 : 0;
-                } else if (userSelectedCorrect.length === totalCorrect && userSelectedValues.length === totalCorrect) {
-                    questionScore = 6;
-                } else if (userSelectedCorrect.length > 0) {
-                    const partialPointValue = 6 / totalCorrect;
-                    questionScore = partialPointValue * userSelectedCorrect.length;
+                const userSelectedCorrect = userSelectedValues.filter(val => correctOptions.includes(val));
+                const userSelectedIncorrect = userSelectedValues.filter(val => !correctOptions.includes(val));
+                const correctButMissed = correctOptions.filter(val => !userSelectedValues.includes(val));
+
+                if (userSelectedIncorrect.length > 0) {
+                    questionScore = 0;
+                } else {
+                    const totalCorrectOptions = correctOptions.length;
+
+                    if (totalCorrectOptions === 0) {
+                        questionScore = userSelectedValues.length === 0 ? 6 : 0;
+                    } else {
+                        const partialPointValue = 6 / totalCorrectOptions;
+                        questionScore = partialPointValue * userSelectedCorrect.length;
+                    }
                 }
+
+                feedback[qNumber] = {
+                    score: questionScore,
+                    userSelectedCorrect,
+                    userSelectedIncorrect,
+                    correctButMissed,
+                    isAnulada: false
+                };
             }
+
             totalObjectiveScore += questionScore;
-            feedback[qNumber] = { score: questionScore, userSelectedCorrect, userSelectedIncorrect, correctButMissed };
         }
+
         setQuestionFeedback(feedback);
         const finalScore = totalObjectiveScore + (parseInt(redacaoScore) || 0);
         setResults({ objective: totalObjectiveScore, final: finalScore });
     };
-
     return (
         <div className="p-8 w-full max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-white mb-6">Corretor - {decodeURIComponent(vestibularName)} ({languageMap[languageName]}) - {vestibularYear}</h2>
