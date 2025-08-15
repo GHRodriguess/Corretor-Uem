@@ -3,6 +3,20 @@ import { ChevronRight, TrendingUp, Compass, Settings } from "lucide-react";
 
 function HomePage() {
 
+    fetch('http://localhost:8000/api/vestibulares').then(
+        response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json();
+        }).then(data => {
+                console.log("Dados recebidos:", data);
+            }
+        ).catch(error => {
+            console.error("Erro ao buscar dados:", error);
+        });
+    
+
     {/* USAR API PARA PEGAR OS DADOS */}
     const vestibulares = [        
         { id: 'inverno-2025', name: 'Vestibular de Inverno 2025' },

@@ -2,11 +2,17 @@ from django.db import models
 
 # Create your models here.
 class Vestibular(models.Model):
+    TIPO_CHOICES = [
+        ('vestibular', 'VESTIBULAR'),
+        ('pas', 'PAS'),        
+    ]
+    
     nome = models.CharField(max_length=100)
     ano = models.IntegerField()
+    tipo = models.CharField(choices=TIPO_CHOICES, default='VESTIBULAR')
     
     def __str__(self):
-        return f"{self.nome} {self.ano}"
+        return f"{self.nome} {self.ano} ({self.get_tipo_display()})"
 
     class Meta:
         verbose_name = "Vestibular"

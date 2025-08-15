@@ -9,23 +9,50 @@ function AddVestibularPage() {
     const [currentQuestion, setCurrentQuestion] = useState(null);
     // Índice da questão atual sendo exibida.
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    // Novos estados para exibir mensagens de erro e sucesso na tela.
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     // Inicializa o estado da primeira questão quando o vestibular é definido.
     useEffect(() => {
         if (vestibular && questoes.length === 0 && currentQuestion === null) {
             setCurrentQuestion({
                 numero: 1,
-                ehIdioma: false,
-                respostasIdioma: {
+                eh_idioma: false,
+                respostas_idioma: {
                     ingles: "",
                     espanhol: "",
                     frances: "",
                 },
-                respostaGeral: "",
+                resposta_geral: "",
             });
         }
     }, [vestibular, questoes, currentQuestion]);
 
+    // Função que fará a chamada POST para a sua API.
+    const enviarDadosParaAPI = async (payload) => {        
+        const url = 'http://localhost:8000/api/adiciona_vestibular';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro na requisição: ${response.status} - ${errorText}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Erro ao enviar dados para a API:", error);
+            throw error;
+        }
+    };
+    
     // Função para salvar o nome, ano e tipo do vestibular.
     const handleSalvarVestibular = (e) => {
         e.preventDefault();
@@ -34,11 +61,16 @@ function AddVestibularPage() {
             ano: e.target.ano.value,
             tipo: e.target.tipo.value,
         });
+        // Limpa as mensagens de erro/sucesso ao começar um novo formulário.
+        setError(null);
+        setSuccessMessage(null);
     };
 
     // Salva a questão atual e avança para a próxima.
     const handleAvancar = () => {
         if (!currentQuestion) return;
+        setError(null);
+        setSuccessMessage(null);
 
         const questaoParaSalvar = { ...currentQuestion };
 
@@ -60,13 +92,13 @@ function AddVestibularPage() {
         } else {
             setCurrentQuestion({
                 numero: newIndex + 1,
-                ehIdioma: false,
-                respostasIdioma: {
+                eh_idioma: false,
+                respostas_idioma: {
                     ingles: "",
                     espanhol: "",
                     frances: "",
                 },
-                respostaGeral: "",
+                resposta_geral: "",
             });
         }
     };
@@ -74,6 +106,8 @@ function AddVestibularPage() {
     // Volta para a questão anterior.
     const handleVoltar = () => {
         if (currentQuestionIndex > 0) {
+            setError(null);
+            setSuccessMessage(null);
             // Salva o estado atual antes de voltar.
             const newQuestoes = [...questoes];
             newQuestoes[currentQuestionIndex] = currentQuestion;
@@ -85,9 +119,7 @@ function AddVestibularPage() {
         }
     };
 
-    // Função para salvar todos os dados no final.
-    const handleFinalizar = () => {
-        // Salva a última questão antes de finalizar.
+    const handleFinalizar = async () => {
         if (currentQuestion) {
             if (currentQuestionIndex >= questoes.length) {
                 setQuestoes([...questoes, currentQuestion]);
@@ -98,19 +130,31 @@ function AddVestibularPage() {
             }
         }
 
-        // Nesta etapa, você faria a chamada para a sua API para salvar os dados.
         console.log("Dados a serem enviados para a API:");
         console.log("Vestibular:", vestibular);
         console.log("Questões:", questoes);
 
-        alert(
-            "Dados salvos com sucesso! Verifique o console para os detalhes."
-        );
-        // Reseta a aplicação para um novo vestibular.
-        setVestibular(null);
-        setQuestoes([]);
-        setCurrentQuestion(null);
-        setCurrentQuestionIndex(0);
+        try {
+            await enviarDadosParaAPI({ vestibular, questoes });
+
+            // Se a requisição for bem-sucedida, exibe a mensagem de sucesso
+            // e reseta o estado da aplicação.
+            setSuccessMessage("Dados salvos com sucesso!");
+            setError(null);
+            setVestibular(null);
+            setQuestoes([]);
+            setCurrentQuestion(null);
+            setCurrentQuestionIndex(0);
+        } catch (error) {
+            // Se a requisição falhar, exibe uma mensagem de erro.
+            // O estado da aplicação não é alterado, mantendo os dados.
+            if (error.message.includes("duplicate key value")) {
+                setError("Já existe um vestibular com o mesmo nome e ano. Por favor, corrija e tente novamente.");
+            } else {
+                setError(`Erro ao salvar dados: ${error.message}`);
+            }
+            setSuccessMessage(null);
+        }
     };
 
     return (
@@ -133,6 +177,20 @@ function AddVestibularPage() {
                     Configuração de Gabaritos
                 </h1>
 
+                {/* Exibe a mensagem de erro se o estado 'error' não for nulo */}
+                {error && (
+                    <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mb-6 text-center">
+                        <p className="font-medium">{error}</p>
+                    </div>
+                )}
+
+                {/* Exibe a mensagem de sucesso se o estado 'successMessage' não for nulo */}
+                {successMessage && (
+                    <div className="bg-green-900 border border-green-700 text-green-200 p-4 rounded-lg mb-6 text-center">
+                        <p className="font-medium">{successMessage}</p>
+                    </div>
+                )}
+
                 {!vestibular ? (
                     <form
                         onSubmit={handleSalvarVestibular}
@@ -153,8 +211,8 @@ function AddVestibularPage() {
                                 required
                                 className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                             >
-                                <option value="Vestibular">Vestibular</option>
-                                <option value="PAS">PAS</option>
+                                <option value="vestibular">Vestibular</option>
+                                <option value="pas">PAS</option>
                             </select>
                         </div>
                         <div>
@@ -210,14 +268,14 @@ function AddVestibularPage() {
                                 <div className="flex items-center gap-2 mt-4">
                                     <input
                                         type="checkbox"
-                                        id="ehIdioma"
-                                        checked={currentQuestion.ehIdioma}
+                                        id="eh_idioma"
+                                        checked={currentQuestion.eh_idioma}
                                         onChange={(e) =>
                                             setCurrentQuestion({
                                                 ...currentQuestion,
-                                                ehIdioma: e.target.checked,
-                                                respostaGeral: "",
-                                                respostasIdioma: {
+                                                eh_idioma: e.target.checked,
+                                                resposta_geral: "",
+                                                respostas_idioma: {
                                                     ingles: "",
                                                     espanhol: "",
                                                     frances: "",
@@ -227,16 +285,16 @@ function AddVestibularPage() {
                                         className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
                                     />
                                     <label
-                                        htmlFor="ehIdioma"
+                                        htmlFor="eh_idioma"
                                         className="text-sm font-medium text-gray-400"
                                     >
                                         Questão de Idioma
                                     </label>
                                 </div>
 
-                                {currentQuestion.ehIdioma ? (
+                                {currentQuestion.eh_idioma ? (
                                     <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        {["ingles", "espanhol", "frances"].map(
+                                        {["espanhol", "frances", "ingles"].map(
                                             (idioma) => (
                                                 <div key={idioma}>
                                                     <label
@@ -260,7 +318,7 @@ function AddVestibularPage() {
                                                             max="31"
                                                             value={
                                                                 currentQuestion
-                                                                    .respostasIdioma[
+                                                                    .respostas_idioma[
                                                                     idioma
                                                                 ]
                                                             }
@@ -268,9 +326,9 @@ function AddVestibularPage() {
                                                                 setCurrentQuestion(
                                                                     {
                                                                         ...currentQuestion,
-                                                                        respostasIdioma:
+                                                                        respostas_idioma:
                                                                             {
-                                                                                ...currentQuestion.respostasIdioma,
+                                                                                ...currentQuestion.respostas_idioma,
                                                                                 [idioma]:
                                                                                     e
                                                                                         .target
@@ -289,7 +347,7 @@ function AddVestibularPage() {
                                 ) : (
                                     <div>
                                         <label
-                                            htmlFor="respostaGeral"
+                                            htmlFor="resposta_geral"
                                             className="block text-sm font-medium text-gray-400"
                                         >
                                             Gabarito
@@ -297,14 +355,14 @@ function AddVestibularPage() {
                                         <div className="mt-1 flex items-center justify-center h-40 w-full rounded-lg border-2 border-gray-600 bg-gray-800 shadow-sm">
                                             <input
                                                 type="number"
-                                                id="respostaGeral"
+                                                id="resposta_geral"
                                                 value={
-                                                    currentQuestion.respostaGeral
+                                                    currentQuestion.resposta_geral
                                                 }
                                                 onChange={(e) =>
                                                     setCurrentQuestion({
                                                         ...currentQuestion,
-                                                        respostaGeral:
+                                                        resposta_geral:
                                                             e.target.value,
                                                     })
                                                 }
