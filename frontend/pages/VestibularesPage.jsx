@@ -1,17 +1,37 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 function VestibularesPage() {
     const navigate = useNavigate();
+    const [vestibulares, setVestibulares] = useState([]);
 
-    {/* USAR API PARA PEGAR OS DADOS */}
-    const vestibulares = [
-        { id: 'inverno-2025', name: 'Vestibular de Inverno 2025' },
-        { id: 'verao-2024', name: 'Vestibular de Verão 2024' },
-    ];
+    useEffect(() => {
+        const fetchData = async (endpoint, setter) => {
+            try {
+                const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
+                const response = await fetch(apiBaseUrl + endpoint);
+                if (!response.ok) {
+                    throw new Error('Erro na requisição');
+                }
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    setter(data);
+                } else {
+                    console.error(`A resposta da API para ${endpoint} não é um array.`, data);
+                    setter([]); 
+                }
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+                setter([]);
+            }
+        };
+            fetchData('vestibulares', setVestibulares);
+        }, []);
 
-    const handleSelect = (vestibularName) => {
-        navigate(`/selecionar-idioma/${encodeURIComponent(vestibularName)}`);
+
+    const handleSelect = (vestibularId) => {
+        navigate(`/selecionar-idioma/${encodeURIComponent(vestibularId)}`);
     };
 
     return (
@@ -21,10 +41,10 @@ function VestibularesPage() {
                 {vestibulares.map(v => (
                     <button
                         key={v.id}
-                        onClick={() => handleSelect(v.name)}
+                        onClick={() => handleSelect(v.id)}
                         className="w-full flex items-center justify-between py-4 px-6 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors duration-200"
                     >
-                        <span className="text-lg font-medium">{v.name}</span>
+                        <span className="text-lg font-medium">{v.nome} {v.ano}</span>
                         <ChevronRight size={20} />
                     </button>
                 ))}

@@ -1,37 +1,42 @@
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, TrendingUp, Compass, Settings } from "lucide-react";
 
 function HomePage() {
 
-    fetch('http://localhost:8000/api/vestibulares').then(
-        response => {
+    const [vestibulares, setVestibulares] = useState([]);
+    const [pas, setPAS] = useState([]);
+
+    useEffect(() => {
+    const fetchData = async (endpoint, setter) => {
+        try {
+            const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
+            const response = await fetch(apiBaseUrl + endpoint);
             if (!response.ok) {
                 throw new Error('Erro na requisição');
             }
-            return response.json();
-        }).then(data => {
-                console.log("Dados recebidos:", data);
+            const data = await response.json();
+            if (Array.isArray(data)) {
+                setter(data);
+            } else {
+                console.error(`A resposta da API para ${endpoint} não é um array.`, data);
+                setter([]); 
             }
-        ).catch(error => {
+        } catch (error) {
             console.error("Erro ao buscar dados:", error);
-        });
-    
+            setter([]);
+        }
+    };
+        fetchData('vestibulares', setVestibulares);
+        fetchData('pas', setPAS);
+    }, []);
 
-    {/* USAR API PARA PEGAR OS DADOS */}
-    const vestibulares = [        
-        { id: 'inverno-2025', name: 'Vestibular de Inverno 2025' },
-        { id: 'verao-2024', name: 'Vestibular de Verão 2024' },
-    ];
     
-    const pasYears = [
-        { id: 'pas-2025', name: 'PAS UEM 2025' },
-        { id: 'pas-2024', name: 'PAS UEM 2024' },
-    ];
 
     const navigate = useNavigate();
 
-    const handleSelectVestibular = (vestibularName) => {
-        navigate(`/selecionar-idioma/${encodeURIComponent(vestibularName)}`);
+    const handleSelectVestibular = (vestibularId) => {
+        navigate(`/selecionar-idioma/${encodeURIComponent(vestibularId)}`);
     };
 
     const handleSelectPas = (pasName) => {
@@ -40,7 +45,6 @@ function HomePage() {
 
     return (
         <div className="p-8 flex flex-col items-center justify-center text-center">
-            {/* Seção Hero */}
             <div className="max-w-4xl mx-auto py-12 md:py-24">
                 <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight animate-fade-in-down">
                     Corretor de Gabaritos UEM
@@ -56,12 +60,9 @@ function HomePage() {
                     <ChevronRight size={24} />
                 </Link>
             </div>
-
-            {/* Seção de Destaques/Recursos */}
             <div className="mt-16 md:mt-24 max-w-4xl mx-auto w-full">
                 <h2 className="text-3xl font-bold text-white mb-8">Por que usar o nosso Corretor?</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Cartão de Destaque 1 */}
                     <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
                         <TrendingUp size={48} className="text-blue-400 mb-4 mx-auto" />
                         <h3 className="text-xl font-bold text-white mb-2">Análise Detalhada</h3>
@@ -69,7 +70,6 @@ function HomePage() {
                             Obtenha feedback preciso sobre sua pontuação, identificando acertos e erros em cada questão.
                         </p>
                     </div>
-                    {/* Cartão de Destaque 2 */}
                     <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
                         <Compass size={48} className="text-blue-400 mb-4 mx-auto" />
                         <h3 className="text-xl font-bold text-white mb-2">Simulação Realista</h3>
@@ -77,7 +77,6 @@ function HomePage() {
                             Nosso sistema de correção segue as regras oficiais do vestibular da UEM para uma estimativa precisa.
                         </p>
                     </div>
-                    {/* Cartão de Destaque 3 */}
                     <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
                         <Settings size={48} className="text-blue-400 mb-4 mx-auto" />
                         <h3 className="text-xl font-bold text-white mb-2">Fácil e Rápido</h3>
@@ -88,34 +87,31 @@ function HomePage() {
                 </div>
             </div>
             
-            {/* Seção de Vestibulares na HomePage */}
             <div className="mt-16 md:mt-24 max-w-4xl mx-auto w-full">
-                <h2 className="text-3xl font-bold text-white mb-6">Vestibulares Disponíveis</h2>
+                <h2 className="text-3xl font-bold text-white mb-6">Vestibulares Recentes</h2>
                 <div className="space-y-4">
                     {vestibulares.map(v => (
                         <button
                             key={v.id}
-                            onClick={() => handleSelectVestibular(v.name)}
+                            onClick={() => handleSelectVestibular(v.id)}
                             className="w-full flex items-center justify-between py-4 px-6 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors duration-200"
                         >
-                            <span className="text-lg font-medium">{v.name}</span>
+                            <span className="text-lg font-medium">{v.nome} {v.ano}</span>
                             <ChevronRight size={20} />
                         </button>
                     ))}
                 </div>
             </div>
-
-            {/* Seção do PAS na HomePage */}
             <div className="mt-16 md:mt-24 max-w-4xl mx-auto w-full">
-                <h2 className="text-3xl font-bold text-white mb-6">Processo de Avaliação Seriada (PAS)</h2>
+                <h2 className="text-3xl font-bold text-white mb-6">Processo de Avaliação Seriada (PAS) Recentes</h2>
                 <div className="space-y-4">
-                    {pasYears.map(year => (
+                    {pas.map(p => (
                         <button
-                            key={year.id}
-                            onClick={() => handleSelectPas(year.name)}
+                            key={p.id}
+                            onClick={() => handleSelectPas(p.ano)}
                             className="w-full flex items-center justify-between py-4 px-6 rounded-lg bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors duration-200"
                         >
-                            <span className="text-lg font-medium">{year.name}</span>
+                            <span className="text-lg font-medium">{p.nome} {p.ano}</span>
                             <ChevronRight size={20} />
                         </button>
                     ))}

@@ -1,31 +1,128 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Circle, CheckCircle, Calculator, ArrowRight } from "lucide-react";
 
 function CorrectorPage(){
-    const { vestibularName, languageName } = useParams();
-    // Dados de gabarito para demonstração.
-    // Em um projeto real, esses dados seriam carregados de uma API
-    // com base em 'selectedVestibular' e 'selectedLanguage'.
-    const gabarito = {
-        1: [1, 8],
-        2: [2, 4, 16],
-        3: [1, 2, 4],
-        4: [16],
-        5: [2,8],
-        6: [1, 2, 4, 8],
-        7: [8],
-        8: [1, 2, 4],
-        9: [4, 8],
-        10: [1, 16]
-    };
+    const { vestibularId, languageName, serieId } = useParams();
+    const [vestibularName, setVestibularName] = useState("");
+    const [vestibularYear, setVestibularYear] = useState("");
+    const [gabarito, setGabarito] = useState({});
     
+    useEffect(() => {
+            async function getVestibular(id) {
+                try {
+                    const response = await fetch(
+                        import.meta.env.VITE_BASE_URL_API + `get_vestibular_by_id/${id}`
+                    );
+    
+                    if (!response.ok) {
+                        console.error("Erro na requisição:", response.status);
+                        setVestibularName("Vestibular não encontrado");
+                        return;
+                    }
+    
+                    const data = await response.json();
+                    setVestibularName(data.nome);
+                    setVestibularYear(data.ano);
+                } catch (error) {
+                    console.error("Erro ao buscar vestibular:", error);
+                    setVestibularName("Vestibular não encontrado");
+                }
+            }
+    
+            if (vestibularId) {
+                getVestibular(vestibularId);
+            }
+        }, [vestibularId]);
+
+
+
+    useEffect(() => {
+        async function fetchGabarito(id, language, serie) {
+            try {
+                let response = await fetch(
+                    import.meta.env.VITE_BASE_URL_API + `questoes/${id}/${language}/${serie}`
+                )
+
+                if (!response.ok) {
+                    console.error("Erro na requisição:", response.status);
+                    return;
+                }
+                const data = await response.json();
+                setGabarito(formatarGabarito(data));
+            }
+            catch (error) {
+                console.error("Erro ao buscar gabarito:", error);
+            }
+        }
+        if (vestibularId && languageName && serieId) {
+            fetchGabarito(vestibularId, languageName, serieId);
+        }
+
+        function formatarGabarito(gabarito) {
+            const gabaritoFormatado = {};
+
+            gabarito.forEach(item => {
+                let valor;
+                if (item.resposta_geral !== null) {
+                    valor = item.resposta_geral;
+                } else if (item.respostas_idioma !== null) {
+                    valor = item.respostas_idioma;
+                } else {            
+                    return; 
+                }
+
+                const numerosSoma = somaToList(valor);
+
+                gabaritoFormatado[item.numero] = numerosSoma;
+            });
+
+            return gabaritoFormatado;
+        }
+
+    }, [vestibularId, languageName, serieId]);
+    
+    
+
+    function somaToList(soma) {
+        if (isNaN(soma) || soma === null) {
+            return "ANULADA";
+        }
+        const valor = parseInt(soma, 10);
+
+        if (valor === 0) {
+            return [];
+        }
+
+        try {
+            const resultado = [];
+            const binario = valor.toString(2);
+
+            for (let i = binario.length - 1; i >= 0; i--) {
+                const posicao = binario.length - 1 - i;
+
+                if (binario[i] === '1') {
+                    resultado.push(Math.pow(2, posicao));
+                }
+            }
+
+            return resultado.sort((a, b) => a - b);
+
+        } catch (error) {
+            
+            return "ANULADA";
+        }
+    }
+
+    const languageMap = {
+        ingles: 'Inglês',
+        espanhol: 'Espanhol',
+        frances: 'Francês',
+    };
     const [selectedAnswers, setSelectedAnswers] = useState({});
     const [redacaoScore, setRedacaoScore] = useState(0);
     const [results, setResults] = useState(null);
     const [questionFeedback, setQuestionFeedback] = useState({});
-
-    // Componente individual para cada questão
     const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedback }) => {
         const options = [1, 2, 4, 8, 16];
         const isSelected = (option) => selectedAnswers.includes(option);
@@ -97,7 +194,6 @@ function CorrectorPage(){
         );
     };
 
-    // Funções de lógica do corretor
     const handleAnswerChange = (questionNumber, option) => {
         setResults(null);
         setQuestionFeedback({});
@@ -145,19 +241,19 @@ function CorrectorPage(){
 
     return (
         <div className="p-8 w-full max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-6">Corretor - {decodeURIComponent(vestibularName)} ({decodeURIComponent(languageName)})</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Corretor - {decodeURIComponent(vestibularName)} ({languageMap[languageName]}) - {vestibularYear}</h2>
             <div className="space-y-6">
                 <div className="bg-gray-700 p-6 rounded-xl border border-gray-600">
                     <h3 className="text-2xl font-semibold mb-4 text-white">Questões Objetivas</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Object.keys(gabarito).map(qNumber => (
+                        {Object.keys(gabarito).map(questao => (
                             <Question
-                                key={qNumber}
-                                questionNumber={qNumber}
-                                selectedAnswers={selectedAnswers[qNumber] || []}
+                                key={questao}
+                                questionNumber={questao}
+                                selectedAnswers={selectedAnswers[questao] || []}
                                 onAnswerChange={handleAnswerChange}
                                 showFeedback={!!results}
-                                questionFeedback={questionFeedback[qNumber]}
+                                questionFeedback={questionFeedback[questao]}
                             />
                         ))}
                     </div>

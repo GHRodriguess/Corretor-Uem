@@ -1,35 +1,39 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Importe useNavigate
 
 function ViewVestibularesPage() {
-    // Estado para armazenar a lista de vestibulares
+    const navigate = useNavigate();
     const [vestibulares, setVestibulares] = useState([]);
-    // Estado para controlar a visualização da edição de gabarito
     const [isEditingGabarito, setIsEditingGabarito] = useState(false);
-    // Estado para armazenar o vestibular que está sendo editado
     const [currentVestibular, setCurrentVestibular] = useState(null);
-    // Estado para armazenar as questões do vestibular selecionado
     const [editedQuestoes, setEditedQuestoes] = useState([]);
-    // Estados para mensagens de feedback
+    const [vestibularToDelete, setVestibularToDelete] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
-    // Função para buscar os vestibulares da API (apenas metadados)
     const fetchVestibulares = async () => {
         try {
-            // Verifica se a variável de ambiente está definida e a usa
-            const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
-            const response = await fetch(apiBaseUrl + "vestibulares");
-            if (!response.ok) {
+            const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
+            
+            const response_vestibulares = await fetch(apiBaseUrl + "vestibulares");
+            if (!response_vestibulares.ok) {
                 throw new Error("Erro ao carregar a lista de vestibulares.");
             }
-            const data = await response.json();
-            setVestibulares(data);
+            const data_vestibulares = await response_vestibulares.json();
+
+            const response_pas = await fetch(apiBaseUrl + "pas/true");
+            if (!response_pas.ok) {
+                throw new Error("Erro ao carregar a lista de vestibulares.");
+            }
+            const data_pas = await response_pas.json();
+            setVestibulares([...data_vestibulares, ...data_pas]); 
+            
         } catch (error) {
             setError(error.message);
         }
     };
 
-    // Função para buscar as questões de um vestibular específico
+    console.log("Vestibulares:", vestibulares);
     const fetchQuestoes = async (vestibularId) => {
         try {
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
@@ -78,7 +82,6 @@ function ViewVestibularesPage() {
 
     // Salva as alterações nas questões (lógica a ser implementada)
     const handleSaveGabarito = async () => {
-        // Exemplo: lógica de envio para a API
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
@@ -97,10 +100,6 @@ function ViewVestibularesPage() {
         } catch (error) {
             setError(error.message);
         }
-        console.log("Lógica para salvar gabarito deve ser implementada aqui.");
-        console.log("Dados a serem enviados:", editedQuestoes);
-        setSuccessMessage("Dados salvos com sucesso!");
-        handleCloseGabaritoEditor();
     };
 
     // Fecha a tela de edição de gabarito
@@ -112,13 +111,55 @@ function ViewVestibularesPage() {
         setSuccessMessage(null);
     };
 
+    // Adiciona o vestibular a ser deletado no estado para exibir a confirmação
+    const handleDeleteClick = (vestibular) => {
+        setVestibularToDelete(vestibular);
+    };
+
+    // Cancela a operação de exclusão
+    const handleCancelDelete = () => {
+        setVestibularToDelete(null);
+    };
+
+    // Confirma a exclusão e chama a API
+    const handleConfirmDelete = async () => {
+        if (!vestibularToDelete) return;
+
+        try {
+            const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
+            const response = await fetch(`${apiBaseUrl}delete/vestibulares/${vestibularToDelete.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao deletar o vestibular.");
+            }
+
+            // Remove o vestibular da lista de estado
+            setVestibulares(vestibulares.filter(v => v.id !== vestibularToDelete.id));
+            setSuccessMessage("Vestibular deletado com sucesso!");
+            setVestibularToDelete(null);
+        } catch (error) {
+            setError(error.message);
+            setVestibularToDelete(null);
+        }
+    };
+
     return (
         <div className="min-h-screen w-full bg-gray-900 p-8 font-sans antialiased flex items-center justify-center text-gray-100">
             <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-700">
-                <h1 className="text-3xl font-bold text-gray-50 mb-6 text-center">
-                    Vestibulares Existentes
-                </h1>
-
+                <div className="flex justify-between items-center mb-6"> {/* Adicione um container flex para alinhamento */}
+                    <h1 className="text-3xl font-bold text-gray-50">
+                        Vestibulares Existentes
+                    </h1>
+                    {/* Adicione o novo botão aqui */}
+                    <button
+                        onClick={() => navigate('/add/vestibulares')} // Chame a função navigate com o caminho
+                        className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-green-600 hover:bg-green-700 transition duration-200"
+                    >
+                        Adicionar Novo Vestibular
+                    </button>
+                </div>
                 {error && (
                     <div className="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mb-6 text-center">
                         <p className="font-medium">{error}</p>
@@ -127,6 +168,32 @@ function ViewVestibularesPage() {
                 {successMessage && (
                     <div className="bg-green-900 border border-green-700 text-green-200 p-4 rounded-lg mb-6 text-center">
                         <p className="font-medium">{successMessage}</p>
+                    </div>
+                )}
+
+                {/* Modal de Confirmação de Exclusão */}
+                {vestibularToDelete && (
+                    <div className="fixed inset-0 bg-gray-950 bg-opacity-75 flex items-center justify-center z-50">
+                        <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 max-w-sm w-full">
+                            <h2 className="text-xl font-bold text-gray-50 mb-4">Confirmar Exclusão</h2>
+                            <p className="text-gray-300 mb-6">
+                                Tem certeza que deseja deletar o vestibular <span className="font-semibold">{vestibularToDelete.nome}</span>? Esta ação não pode ser desfeita.
+                            </p>
+                            <div className="flex justify-end space-x-4">
+                                <button
+                                    onClick={handleCancelDelete}
+                                    className="px-4 py-2 rounded-lg text-white bg-gray-600 hover:bg-gray-700 transition"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={handleConfirmDelete}
+                                    className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition"
+                                >
+                                    Deletar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -156,6 +223,12 @@ function ViewVestibularesPage() {
                                         >
                                             Editar Gabarito
                                         </button>
+                                        <button
+                                            onClick={() => handleDeleteClick(vestibular)}
+                                            className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition duration-200"
+                                        >
+                                            Deletar
+                                        </button>
                                     </div>
                                 </div>
                             ))
@@ -173,7 +246,7 @@ function ViewVestibularesPage() {
                                     <div className="flex items-center gap-2">
                                         <label htmlFor={`questao-${index}`} className="text-sm font-medium text-gray-400">
                                             Questão {index + 1}:
-                                        </label>                                        
+                                        </label>
                                     </div>
                                     <div className="flex items-center gap-2 mt-4">
                                         <input

@@ -25,10 +25,12 @@ function App() {
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/vestibulares" element={<VestibularesPage />} />                        
-                        <Route path="/pas" element={<PasYearSelectionPage />} />
+                        <Route path="/pas" element={< PasYearSelectionPage />} />
                         <Route path="/pas/:pasYear/serie" element={<PasSerieSelectionPage />} />                        
-                        <Route path="/selecionar-idioma/:vestibularName" element={<LanguageSelectionPage />} />
-                        <Route path="/corretor/:vestibularName/:languageName" element={<CorrectorPage />} />
+                        <Route path="/selecionar-idioma/:vestibularId/:serieId" element={<LanguageSelectionPage />} />
+                        <Route path="/selecionar-idioma/:vestibularId/" element={<LanguageSelectionPage />} />
+                        <Route path="/corretor/:vestibularId/:languageName/:serieId" element={<CorrectorPage />} />
+                        <Route path="/corretor/:vestibularId/:languageName" element={<CorrectorPage />} />
                         <Route path="/add/vestibulares" element={<AddVestibularPage />} />
                         <Route path="/view/vestibulares" element={<ViewVestibularesPage />} />
                         
