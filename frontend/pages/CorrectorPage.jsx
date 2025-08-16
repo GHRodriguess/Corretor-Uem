@@ -2,22 +2,14 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Circle, CheckCircle, Calculator, ArrowRight } from "lucide-react";
 
-// Componente Question para exibir e gerenciar as opções de uma única questão
 const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedback, onAnswerChange }) => {
-    // Array com todas as opções de resposta
     const options = [1, 2, 4, 8, 16];
-    // Função utilitária para verificar se uma opção está selecionada
     const isSelected = (option) => selectedAnswers.includes(option);
-    // Calcula a soma das opções selecionadas
     const sumOfSelected = selectedAnswers.reduce((sum, current) => sum + current, 0);
-
-    // Determina a cor de fundo e texto da opção com base no estado de seleção e feedback
     const getOptionColor = (option) => {
-        // Se o feedback não está sendo exibido (o usuário ainda não calculou o score)
         if (!showFeedback) {
             return isSelected(option) ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
         }
-        // Se o feedback está sendo exibido, aplica as cores de feedback
         const isUserSelected = isSelected(option);
         if (isUserSelected && questionFeedback.userSelectedIncorrect.includes(option)) return 'bg-red-600 text-white';
         if (isUserSelected && questionFeedback.userSelectedCorrect.includes(option)) return 'bg-green-600 text-white';
@@ -37,10 +29,7 @@ const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedb
                     )}
                 </div>
             </div>
-            {/* NOVO LAYOUT RESPONSIVO: */}
-            {/* O layout de 2 colunas para mobile é definido aqui. Em telas maiores, o flex-col é substituído por flex-row */}
             <div className="w-full flex flex-col md:flex-row md:justify-center flex-wrap gap-2">
-                {/* Opções 1, 2, 4, 8 em um grid de 2x2 para telas pequenas */}
                 <div className="w-full grid grid-cols-2 gap-2">
                     {options.slice(0, 4).map(option => (
                         <label
@@ -63,7 +52,6 @@ const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedb
                         </label>
                     ))}
                 </div>
-                {/* Opção 16 em uma linha separada, centralizada, para telas pequenas */}
                 <div className="flex justify-center w-full">
                      <label
                         key={options[4]}
@@ -112,7 +100,6 @@ export default function CorrectorPage() {
     const [vestibularYear, setVestibularYear] = useState("");
     const [gabarito, setGabarito] = useState({});
     
-    // Hook para buscar dados do vestibular na API
     useEffect(() => {
         async function getVestibular(id) {
             try {
@@ -140,8 +127,6 @@ export default function CorrectorPage() {
         }
     }, [vestibularId]);
 
-
-    // Hook para buscar o gabarito na API
     useEffect(() => {
         async function fetchGabarito(id, language, serie) {
             try {
@@ -185,8 +170,7 @@ export default function CorrectorPage() {
         }
 
     }, [vestibularId, languageName, serieId]);
-    
-    // Converte a soma de opções para uma lista de potências de 2 (ex: 3 -> [1, 2])
+
     function somaToList(soma) {
         if (isNaN(soma) || soma === null) {
             return "ANULADA";
@@ -225,7 +209,6 @@ export default function CorrectorPage() {
     const [results, setResults] = useState(null);
     const [questionFeedback, setQuestionFeedback] = useState({});
 
-    // Handler para gerenciar as seleções de resposta
     const handleAnswerChange = (questionNumber, option) => {
         setResults(null);
         setQuestionFeedback({});
@@ -239,7 +222,6 @@ export default function CorrectorPage() {
         });
     };
 
-    // Função para calcular a pontuação final
     const calculateScore = () => {
         let totalObjectiveScore = 0;
         const feedback = {};

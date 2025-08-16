@@ -121,11 +121,6 @@ function AddVestibularPage() {
                 setQuestoes(newQuestoes);
             }
         }
-
-        console.log("Dados a serem enviados para a API:");
-        console.log("Vestibular:", vestibular);
-        console.log("Questões:", questoes);
-
         try {
             await enviarDadosParaAPI({ vestibular, questoes });
 
@@ -149,7 +144,6 @@ function AddVestibularPage() {
         <div className="min-h-screen w-full bg-gray-900 p-8 font-sans antialiased flex items-center justify-center text-gray-100">
             <style>
                 {`
-          /* Remove as setas (spinners) de inputs de número */
           input[type="number"]::-webkit-outer-spin-button,
           input[type="number"]::-webkit-inner-spin-button {
               -webkit-appearance: none;

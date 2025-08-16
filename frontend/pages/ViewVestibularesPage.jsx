@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Importe useNavigate
+import { useNavigate } from "react-router-dom";
 
 function ViewVestibularesPage() {
     const navigate = useNavigate();
@@ -32,8 +32,6 @@ function ViewVestibularesPage() {
             setError(error.message);
         }
     };
-
-    console.log("Vestibulares:", vestibulares);
     const fetchQuestoes = async (vestibularId) => {
         try {
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
@@ -48,26 +46,22 @@ function ViewVestibularesPage() {
         }
     };
 
-    // Executa a busca ao carregar a página
     useEffect(() => {
         fetchVestibulares();
     }, []);
 
-    // Abre a tela de edição de gabarito
     const handleEditGabaritoClick = (vestibular) => {
         setCurrentVestibular(vestibular);
         fetchQuestoes(vestibular.id);
         setIsEditingGabarito(true);
     };
 
-    // Função para atualizar o valor de uma questão
     const handleUpdateQuestion = (index, field, value) => {
         const newQuestoes = [...editedQuestoes];
         newQuestoes[index] = { ...newQuestoes[index], [field]: value };
         setEditedQuestoes(newQuestoes);
     };
 
-    // Função para atualizar a resposta de idioma
     const handleUpdateLanguageAnswer = (index, idioma, value) => {
         const newQuestoes = [...editedQuestoes];
         newQuestoes[index] = {
@@ -80,7 +74,6 @@ function ViewVestibularesPage() {
         setEditedQuestoes(newQuestoes);
     };
 
-    // Salva as alterações nas questões (lógica a ser implementada)
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
@@ -102,7 +95,6 @@ function ViewVestibularesPage() {
         }
     };
 
-    // Fecha a tela de edição de gabarito
     const handleCloseGabaritoEditor = () => {
         setIsEditingGabarito(false);
         setCurrentVestibular(null);
@@ -111,17 +103,14 @@ function ViewVestibularesPage() {
         setSuccessMessage(null);
     };
 
-    // Adiciona o vestibular a ser deletado no estado para exibir a confirmação
     const handleDeleteClick = (vestibular) => {
         setVestibularToDelete(vestibular);
     };
 
-    // Cancela a operação de exclusão
     const handleCancelDelete = () => {
         setVestibularToDelete(null);
     };
 
-    // Confirma a exclusão e chama a API
     const handleConfirmDelete = async () => {
         if (!vestibularToDelete) return;
 
@@ -135,7 +124,6 @@ function ViewVestibularesPage() {
                 throw new Error("Erro ao deletar o vestibular.");
             }
 
-            // Remove o vestibular da lista de estado
             setVestibulares(vestibulares.filter(v => v.id !== vestibularToDelete.id));
             setSuccessMessage("Vestibular deletado com sucesso!");
             setVestibularToDelete(null);
@@ -148,13 +136,12 @@ function ViewVestibularesPage() {
     return (
         <div className="min-h-screen w-full bg-gray-900 p-8 font-sans antialiased flex items-center justify-center text-gray-100">
             <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-700">
-                <div className="flex justify-between items-center mb-6"> {/* Adicione um container flex para alinhamento */}
+                <div className="flex justify-between items-center mb-6"> 
                     <h1 className="text-3xl font-bold text-gray-50">
                         Vestibulares Existentes
                     </h1>
-                    {/* Adicione o novo botão aqui */}
                     <button
-                        onClick={() => navigate('/add/vestibulares')} // Chame a função navigate com o caminho
+                        onClick={() => navigate('/add/vestibulares')} 
                         className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-green-600 hover:bg-green-700 transition duration-200"
                     >
                         Adicionar Novo Vestibular
@@ -171,7 +158,6 @@ function ViewVestibularesPage() {
                     </div>
                 )}
 
-                {/* Modal de Confirmação de Exclusão */}
                 {vestibularToDelete && (
                     <div className="fixed inset-0 bg-gray-950 bg-opacity-75 flex items-center justify-center z-50">
                         <div className="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700 max-w-sm w-full">
@@ -235,7 +221,6 @@ function ViewVestibularesPage() {
                         )}
                     </div>
                 ) : (
-                    // Tela de Edição de Gabarito
                     <div className="space-y-6">
                         <h2 className="text-2xl font-bold text-gray-50 mb-4 text-center">
                             Editando Gabarito: {currentVestibular.nome}

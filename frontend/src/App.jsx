@@ -1,9 +1,7 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 
-/* COMPONENTES DE PÁGINA */
 import Navbar from '../components/Navbar';
 
-/* Páginas */
 import HomePage from '../pages/HomePage';
 import VestibularesPage from '../pages/VestibularesPage';
 import PasYearSelectionPage from '../pages/PasYearSelectionPage';
@@ -19,8 +17,6 @@ function App() {
             <div className="flex flex-col min-h-screen p-4 md:p-8 bg-gray-900">
                 <Navbar />
                 
-
-                {/* Container para o conteúdo da página */}
                 <main className="flex-grow h-full bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-3 flex flex-col items-center justify-center">
                     <Routes>
                         <Route path="/" element={<HomePage />} />

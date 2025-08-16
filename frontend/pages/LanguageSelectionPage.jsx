@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
 function LanguageSelectionPage(){
-    // Estado para armazenar o nome do vestibular
     const [vestibularName, setVestibularName] = useState("");
     const [vestibularYear, setVestibularYear] = useState("");
 
@@ -25,7 +24,6 @@ function LanguageSelectionPage(){
                 }
 
                 const data = await response.json();
-                console.log(data);
                 setVestibularName(data.nome);
                 setVestibularYear(data.ano);
             } catch (error) {

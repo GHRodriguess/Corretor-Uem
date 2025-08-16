@@ -11,8 +11,6 @@ function HomePage() {
     const fetchData = async (endpoint, setter) => {
         try {
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
-            console.log("BASE URL API" + apiBaseUrl)
-            console.log(apiBaseUrl + endpoint)
             const response = await fetch(apiBaseUrl + endpoint);
             if (!response.ok) {
                 throw new Error('Erro na requisição');
