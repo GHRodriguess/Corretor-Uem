@@ -2,41 +2,146 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Circle, CheckCircle, Calculator, ArrowRight } from "lucide-react";
 
-function CorrectorPage(){
+// Componente Question para exibir e gerenciar as opções de uma única questão
+const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedback, onAnswerChange }) => {
+    // Array com todas as opções de resposta
+    const options = [1, 2, 4, 8, 16];
+    // Função utilitária para verificar se uma opção está selecionada
+    const isSelected = (option) => selectedAnswers.includes(option);
+    // Calcula a soma das opções selecionadas
+    const sumOfSelected = selectedAnswers.reduce((sum, current) => sum + current, 0);
+
+    // Determina a cor de fundo e texto da opção com base no estado de seleção e feedback
+    const getOptionColor = (option) => {
+        // Se o feedback não está sendo exibido (o usuário ainda não calculou o score)
+        if (!showFeedback) {
+            return isSelected(option) ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
+        }
+        // Se o feedback está sendo exibido, aplica as cores de feedback
+        const isUserSelected = isSelected(option);
+        if (isUserSelected && questionFeedback.userSelectedIncorrect.includes(option)) return 'bg-red-600 text-white';
+        if (isUserSelected && questionFeedback.userSelectedCorrect.includes(option)) return 'bg-green-600 text-white';
+        if (!isUserSelected && questionFeedback.correctButMissed.includes(option)) return 'bg-yellow-600 text-white';
+        return 'bg-gray-700 text-gray-300';
+    };
+
+    return (
+        <div className="p-4 bg-gray-900 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.01]">
+            <div className="flex items-center justify-between">
+                <p className="text-lg font-medium mb-3 text-white">Questão {questionNumber}</p>
+                <div className="flex items-center space-x-2">
+                    {sumOfSelected > 0 && (
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold text-sm shadow-lg">
+                            {sumOfSelected}
+                        </div>
+                    )}
+                </div>
+            </div>
+            {/* NOVO LAYOUT RESPONSIVO: */}
+            {/* O layout de 2 colunas para mobile é definido aqui. Em telas maiores, o flex-col é substituído por flex-row */}
+            <div className="flex flex-col md:flex-row md:justify-center flex-wrap gap-2">
+                {/* Opções 1, 2, 4, 8 em um grid de 2x2 para telas pequenas */}
+                <div className="grid grid-cols-2 gap-2">
+                    {options.slice(0, 4).map(option => (
+                        <label
+                            key={option}
+                            className={`
+                                flex items-center  space-x-2 cursor-pointer p-3 rounded-md transition-colors duration-200 w-full
+                                ${getOptionColor(option)}
+                            `}
+                        >
+                            <input
+                                type="checkbox"
+                                name={`q${questionNumber}`}
+                                value={option}
+                                checked={isSelected(option)}
+                                onChange={() => onAnswerChange(questionNumber, option)}
+                                className="hidden"
+                            />
+                            {isSelected(option) ? <CheckCircle size={16} /> : <Circle size={16} />}
+                            <span className="font-bold text-white">{option}</span>
+                        </label>
+                    ))}
+                </div>
+                {/* Opção 16 em uma linha separada, centralizada, para telas pequenas */}
+                <div className="flex justify-center w-full">
+                     <label
+                        key={options[4]}
+                        className={`
+                            flex items-center justify-center space-x-2 cursor-pointer p-3 rounded-md transition-colors duration-200 w-full
+                            ${getOptionColor(options[4])}
+                        `}
+                    >
+                        <input
+                            type="checkbox"
+                            name={`q${questionNumber}`}
+                            value={options[4]}
+                            checked={isSelected(options[4])}
+                            onChange={() => onAnswerChange(questionNumber, options[4])}
+                            className="hidden"
+                        />
+                        {isSelected(options[4]) ? <CheckCircle size={16} /> : <Circle size={16} />}
+                        <span className="font-bold text-white">{options[4]}</span>
+                    </label>
+                </div>
+            </div>
+            {showFeedback && questionFeedback && (
+                <div className="mt-4 pt-4 border-t border-gray-700 text-sm space-y-2">
+                    <p className="font-semibold text-white">
+                        Sua pontuação nesta questão: <span className="text-lg font-bold text-green-400">{questionFeedback.score.toFixed(2)}</span> / 6.00
+                    </p>
+                    {questionFeedback.userSelectedIncorrect.length > 0 && (
+                        <p className="text-red-400">
+                            Você marcou as opções incorretas: <span className="font-bold">{questionFeedback.userSelectedIncorrect.join(', ')}</span>
+                        </p>
+                    )}
+                    {questionFeedback.correctButMissed.length > 0 && (
+                        <p className="text-yellow-400">
+                            Você deixou de marcar as opções corretas: <span className="font-bold">{questionFeedback.correctButMissed.join(', ')}</span>
+                        </p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default function CorrectorPage() {
     const { vestibularId, languageName, serieId } = useParams();
     const [vestibularName, setVestibularName] = useState("");
     const [vestibularYear, setVestibularYear] = useState("");
     const [gabarito, setGabarito] = useState({});
     
+    // Hook para buscar dados do vestibular na API
     useEffect(() => {
-            async function getVestibular(id) {
-                try {
-                    const response = await fetch(
-                        import.meta.env.VITE_BASE_URL_API + `get_vestibular_by_id/${id}`
-                    );
-    
-                    if (!response.ok) {
-                        console.error("Erro na requisição:", response.status);
-                        setVestibularName("Vestibular não encontrado");
-                        return;
-                    }
-    
-                    const data = await response.json();
-                    setVestibularName(data.nome);
-                    setVestibularYear(data.ano);
-                } catch (error) {
-                    console.error("Erro ao buscar vestibular:", error);
+        async function getVestibular(id) {
+            try {
+                const response = await fetch(
+                    import.meta.env.VITE_BASE_URL_API + `get_vestibular_by_id/${id}`
+                );
+
+                if (!response.ok) {
+                    console.error("Erro na requisição:", response.status);
                     setVestibularName("Vestibular não encontrado");
+                    return;
                 }
+
+                const data = await response.json();
+                setVestibularName(data.nome);
+                setVestibularYear(data.ano);
+            } catch (error) {
+                console.error("Erro ao buscar vestibular:", error);
+                setVestibularName("Vestibular não encontrado");
             }
-    
-            if (vestibularId) {
-                getVestibular(vestibularId);
-            }
-        }, [vestibularId]);
+        }
+
+        if (vestibularId) {
+            getVestibular(vestibularId);
+        }
+    }, [vestibularId]);
 
 
-
+    // Hook para buscar o gabarito na API
     useEffect(() => {
         async function fetchGabarito(id, language, serie) {
             try {
@@ -68,12 +173,11 @@ function CorrectorPage(){
                     valor = item.resposta_geral;
                 } else if (item.respostas_idioma !== null) {
                     valor = item.respostas_idioma;
-                } else {            
-                    return; 
+                } else {
+                    return;
                 }
 
                 const numerosSoma = somaToList(valor);
-                console.log(numerosSoma, numerosSoma.reduce((a, b) => a + b, 0))
                 gabaritoFormatado[item.numero] = numerosSoma;
             });
 
@@ -82,8 +186,7 @@ function CorrectorPage(){
 
     }, [vestibularId, languageName, serieId]);
     
-    
-
+    // Converte a soma de opções para uma lista de potências de 2 (ex: 3 -> [1, 2])
     function somaToList(soma) {
         if (isNaN(soma) || soma === null) {
             return "ANULADA";
@@ -107,12 +210,9 @@ function CorrectorPage(){
             }
 
             return resultado.sort((a, b) => a - b);
-
         } catch (error) {
-            
             return "ANULADA";
         }
-        
     }
 
     const languageMap = {
@@ -124,77 +224,8 @@ function CorrectorPage(){
     const [redacaoScore, setRedacaoScore] = useState(0);
     const [results, setResults] = useState(null);
     const [questionFeedback, setQuestionFeedback] = useState({});
-    const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedback }) => {
-        const options = [1, 2, 4, 8, 16];
-        const isSelected = (option) => selectedAnswers.includes(option);
-        const sumOfSelected = selectedAnswers.reduce((sum, current) => sum + current, 0);
 
-        const getOptionColor = (option) => {
-            if (!showFeedback) {
-                return isSelected(option) ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
-            }
-            const isUserSelected = isSelected(option);           
-            if (isUserSelected && questionFeedback.userSelectedIncorrect.includes(option)) return 'bg-red-600 text-white';
-            if (isUserSelected && questionFeedback.userSelectedCorrect.includes(option)) return 'bg-green-600 text-white';
-            if (!isUserSelected && questionFeedback.correctButMissed.includes(option)) return 'bg-yellow-600 text-white';
-            return 'bg-gray-700 text-gray-300';
-        };
-
-        return (
-            <div className="p-4 bg-gray-900 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.01]">
-                <div className="flex items-center justify-between">
-                    <p className="text-lg font-medium mb-3 text-white">Questão {questionNumber}</p>
-                    <div className="flex items-center space-x-2">
-                        {sumOfSelected > 0 && (
-                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold text-sm shadow-lg">
-                                {sumOfSelected}
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <div className="flex flex-col items-center md:flex-row md:justify-center flex-wrap gap-2">
-                    {options.map(option => (
-                        <label
-                            key={option}
-                            className={`
-                                flex items-center space-x-2 cursor-pointer p-3 rounded-md transition-colors duration-200
-                                ${getOptionColor(option)}
-                            `}
-                        >
-                            <input
-                                type="checkbox"
-                                name={`q${questionNumber}`}
-                                value={option}
-                                checked={isSelected(option)}
-                                onChange={() => handleAnswerChange(questionNumber, option)}
-                                className="hidden"
-                            />
-                            {isSelected(option) ? <CheckCircle size={16} /> : <Circle size={16} />}
-                            <span className="font-bold text-white">{option}</span>
-                        </label>
-                    ))}
-                </div>
-                {showFeedback && questionFeedback && (
-                    <div className="mt-4 pt-4 border-t border-gray-700 text-sm space-y-2">
-                        <p className="font-semibold text-white">
-                            Sua pontuação nesta questão: <span className="text-lg font-bold text-green-400">{questionFeedback.score.toFixed(2)}</span> / 6.00
-                        </p>
-                        {questionFeedback.userSelectedIncorrect.length > 0 && (
-                            <p className="text-red-400">
-                                Você marcou as opções incorretas: <span className="font-bold">{questionFeedback.userSelectedIncorrect.join(', ')}</span>
-                            </p>
-                        )}
-                        {questionFeedback.correctButMissed.length > 0 && (
-                            <p className="text-yellow-400">
-                                Você deixou de marcar as opções corretas: <span className="font-bold">{questionFeedback.correctButMissed.join(', ')}</span>
-                            </p>
-                        )}
-                    </div>
-                )}
-            </div>
-        );
-    };
-
+    // Handler para gerenciar as seleções de resposta
     const handleAnswerChange = (questionNumber, option) => {
         setResults(null);
         setQuestionFeedback({});
@@ -208,6 +239,7 @@ function CorrectorPage(){
         });
     };
 
+    // Função para calcular a pontuação final
     const calculateScore = () => {
         let totalObjectiveScore = 0;
         const feedback = {};
@@ -262,6 +294,7 @@ function CorrectorPage(){
         const finalScore = totalObjectiveScore + (parseInt(redacaoScore) || 0);
         setResults({ objective: totalObjectiveScore, final: finalScore });
     };
+
     return (
         <div className="p-8 w-full max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-white mb-6">Corretor - {decodeURIComponent(vestibularName)} ({languageMap[languageName]}) - {vestibularYear}</h2>
@@ -282,7 +315,7 @@ function CorrectorPage(){
                     </div>
                 </div>
 
-                <div className="bg-gray-700 p-6 rounded-xl flex flex-col md:flex-row items-center justify-between border border-gray-600">
+                <div className="bg-gray-700 p-6 w-full rounded-xl flex flex-col md:flex-row items-center justify-between border border-gray-600">
                     <h3 className="text-2xl font-semibold text-white mb-4 md:mb-0">Nota da Redação (0-120)</h3>
                     <input
                         type="number"
@@ -319,5 +352,3 @@ function CorrectorPage(){
         </div>
     );
 }
-
-export default CorrectorPage;
