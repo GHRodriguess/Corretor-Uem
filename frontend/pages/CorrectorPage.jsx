@@ -39,7 +39,7 @@ const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedb
             </div>
             {/* NOVO LAYOUT RESPONSIVO: */}
             {/* O layout de 2 colunas para mobile é definido aqui. Em telas maiores, o flex-col é substituído por flex-row */}
-            <div className="flex flex-col md:flex-row md:justify-center flex-wrap gap-2">
+            <div className="w-full flex flex-col md:flex-row md:justify-center flex-wrap gap-2">
                 {/* Opções 1, 2, 4, 8 em um grid de 2x2 para telas pequenas */}
                 <div className="grid grid-cols-2 gap-2">
                     {options.slice(0, 4).map(option => (
