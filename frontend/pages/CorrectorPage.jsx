@@ -158,10 +158,13 @@ export default function CorrectorPage() {
                     valor = item.resposta_geral;
                 } else if (item.respostas_idioma !== null) {
                     valor = item.respostas_idioma;
-                } else {
+                    
+                } else if (item.anulada){
+                    valor = "ANULADA"
+                }
+                else {
                     return;
                 }
-
                 const numerosSoma = somaToList(valor);
                 gabaritoFormatado[item.numero] = numerosSoma;
             });
@@ -195,6 +198,7 @@ export default function CorrectorPage() {
 
             return resultado.sort((a, b) => a - b);
         } catch (error) {
+            console.error(error)
             return "ANULADA";
         }
     }
@@ -237,7 +241,7 @@ export default function CorrectorPage() {
                 questionScore = 6;
                 feedback[qNumber] = {
                     score: questionScore,
-                    userSelectedCorrect: [],
+                    userSelectedCorrect: [1, 2, 4, 8, 16],
                     userSelectedIncorrect: [],
                     correctButMissed: [],
                     isAnulada: true

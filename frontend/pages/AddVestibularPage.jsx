@@ -21,6 +21,7 @@ function AddVestibularPage() {
                     frances: "",
                 },
                 resposta_geral: "",
+                anulada: false, // Adicionado: estado inicial do campo anulada
             });
         }
     }, [vestibular, questoes, currentQuestion]);
@@ -70,7 +71,7 @@ function AddVestibularPage() {
         setSuccessMessage(null);
 
         const questaoParaSalvar = { ...currentQuestion };
-
+        // Lógica de avanço ajustada para o novo campo
         if (currentQuestionIndex >= questoes.length) {
             setQuestoes([...questoes, questaoParaSalvar]);
         } else {
@@ -93,6 +94,7 @@ function AddVestibularPage() {
                     frances: "",
                 },
                 resposta_geral: "",
+                anulada: false, // Adicionado: novo estado para a próxima questão
             });
         }
     };
@@ -113,30 +115,27 @@ function AddVestibularPage() {
 
     const handleFinalizar = async () => {
         if (currentQuestion) {
-            if (currentQuestionIndex >= questoes.length) {
-                setQuestoes([...questoes, currentQuestion]);
-            } else {
-                const newQuestoes = [...questoes];
-                newQuestoes[currentQuestionIndex] = currentQuestion;
-                setQuestoes(newQuestoes);
-            }
-        }
-        try {
-            await enviarDadosParaAPI({ vestibular, questoes });
+            // Lógica de finalização ajustada para o novo campo
+            const newQuestoes = [...questoes];
+            newQuestoes[currentQuestionIndex] = currentQuestion;
+            setQuestoes(newQuestoes);
+            try {
+                await enviarDadosParaAPI({ vestibular, questoes: newQuestoes }); // Enviando o estado mais atualizado
 
-            setSuccessMessage("Dados salvos com sucesso!");
-            setError(null);
-            setVestibular(null);
-            setQuestoes([]);
-            setCurrentQuestion(null);
-            setCurrentQuestionIndex(0);
-        } catch (error) {
-            if (error.message.includes("duplicate key value")) {
-                setError("Já existe um vestibular com o mesmo nome e ano. Por favor, corrija e tente novamente.");
-            } else {
-                setError(`Erro ao salvar dados: ${error.message}`);
+                setSuccessMessage("Dados salvos com sucesso!");
+                setError(null);
+                setVestibular(null);
+                setQuestoes([]);
+                setCurrentQuestion(null);
+                setCurrentQuestionIndex(0);
+            } catch (error) {
+                if (error.message.includes("duplicate key value")) {
+                    setError("Já existe um vestibular com o mesmo nome e ano. Por favor, corrija e tente novamente.");
+                } else {
+                    setError(`Erro ao salvar dados: ${error.message}`);
+                }
+                setSuccessMessage(null);
             }
-            setSuccessMessage(null);
         }
     };
 
@@ -266,6 +265,30 @@ function AddVestibularPage() {
                                     <h3 className="text-xl font-bold text-gray-50">
                                         Questão {currentQuestion.numero}
                                     </h3>
+                                    {/* Adicionado: checkbox para "anulada" */}
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id="anulada"
+                                            checked={currentQuestion.anulada}
+                                            onChange={(e) =>
+                                                setCurrentQuestion({
+                                                    ...currentQuestion,
+                                                    anulada: e.target.checked,
+                                                    // Se a questão for anulada, a resposta geral e de idioma deve ser limpa
+                                                    resposta_geral: e.target.checked ? "" : currentQuestion.resposta_geral,
+                                                    respostas_idioma: e.target.checked ? { ingles: "", espanhol: "", frances: "" } : currentQuestion.respostas_idioma,
+                                                })
+                                            }
+                                            className="rounded text-red-600 bg-gray-800 border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                                        />
+                                        <label
+                                            htmlFor="anulada"
+                                            className="ml-2 text-sm font-medium text-gray-400"
+                                        >
+                                            Anulada
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-2 mt-4">
@@ -277,15 +300,14 @@ function AddVestibularPage() {
                                             setCurrentQuestion({
                                                 ...currentQuestion,
                                                 eh_idioma: e.target.checked,
-                                                resposta_geral: "",
-                                                respostas_idioma: {
-                                                    ingles: "",
-                                                    espanhol: "",
-                                                    frances: "",
-                                                },
+                                                // Se for de idioma, a resposta geral é limpa
+                                                resposta_geral: e.target.checked ? "" : currentQuestion.resposta_geral,
+                                                // Se não for de idioma, as respostas de idioma são limpas
+                                                respostas_idioma: !e.target.checked ? { ingles: "", espanhol: "", frances: "" } : currentQuestion.respostas_idioma,
                                             })
                                         }
-                                        className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                                        disabled={currentQuestion.anulada} // Desabilita o checkbox se a questão for anulada
+                                        className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     />
                                     <label
                                         htmlFor="eh_idioma"
@@ -340,7 +362,8 @@ function AddVestibularPage() {
                                                                     }
                                                                 )
                                                             }
-                                                            className="text-4xl text-white font-bold text-center bg-transparent w-full h-full p-2 border-none focus:ring-0"
+                                                            disabled={currentQuestion.anulada} // Desabilita o campo se a questão for anulada
+                                                            className="text-4xl text-white font-bold text-center bg-transparent w-full h-full p-2 border-none focus:ring-0 disabled:opacity-50"
                                                         />
                                                     </div>
                                                 </div>
@@ -369,7 +392,8 @@ function AddVestibularPage() {
                                                             e.target.value,
                                                     })
                                                 }
-                                                className="text-7xl text-white font-bold text-center bg-transparent w-full h-full p-2 border-none focus:ring-0"
+                                                disabled={currentQuestion.anulada} // Desabilita o campo se a questão for anulada
+                                                className="text-7xl text-white font-bold text-center bg-transparent w-full h-full p-2 border-none focus:ring-0 disabled:opacity-50"
                                             />
                                         </div>
                                     </div>

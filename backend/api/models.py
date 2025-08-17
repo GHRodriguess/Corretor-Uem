@@ -40,6 +40,7 @@ class Questao(models.Model):
     numero = models.IntegerField()   
     resposta_geral = models.IntegerField(null=True)
     eh_idioma = models.BooleanField(default=False)
+    anulada = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Questão {self.numero} - {self.vestibular}"

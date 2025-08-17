@@ -10,7 +10,7 @@ class VestibularAdmin(admin.ModelAdmin):
 
 @admin.register(Questao)
 class QuestaoAdmin(admin.ModelAdmin):
-    list_display = ('numero', 'vestibular', 'eh_idioma', 'resposta_geral',)
+    list_display = ('numero', 'vestibular', 'eh_idioma', 'anulada','resposta_geral',)
     list_filter = ('vestibular', 'eh_idioma',)
     search_fields = ('numero', 'vestibular__nome',)
     raw_id_fields = ('vestibular',)

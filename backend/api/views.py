@@ -113,6 +113,7 @@ def questoes(request, vestibular_id, idioma=None, serie=None):
                 'eh_idioma': questao.eh_idioma,
                 'resposta_geral': questao.resposta_geral,
                 'respostas_idioma': respostas_idioma_data,
+                'anulada': questao.anulada
             })
         
         print(json.dumps(questoes_serializadas, indent=4, ensure_ascii=False))
@@ -132,7 +133,7 @@ def adiciona_vestibular(request):
         return JsonResponse({'erro': 'Método não permitido.'}, status=405)
 
     try:
-        data = json.loads(request.body)        
+        data = json.loads(request.body)  
         with transaction.atomic():
             vestibular_data = data.get('vestibular')
             questoes_data = data.get('questoes')
@@ -150,13 +151,13 @@ def adiciona_vestibular(request):
                 if resposta_geral_valor is not None and resposta_geral_valor != '':
                     resposta_geral_valor = int(resposta_geral_valor)
                 else:
-                    resposta_geral_valor = None
-
+                    resposta_geral_valor = None                
                 questao = Questao.objects.create(
                     vestibular=vestibular,
                     numero=questao_data['numero'],
                     resposta_geral= resposta_geral_valor,
-                    eh_idioma=eh_idioma
+                    eh_idioma=eh_idioma,
+                    anulada= questao_data.get("anulada", False)
                 )
 
                 if questao.eh_idioma:
