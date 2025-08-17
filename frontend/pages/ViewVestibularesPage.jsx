@@ -96,6 +96,7 @@ function ViewVestibularesPage() {
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
+            console.log(editedQuestoes)
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
