@@ -196,7 +196,8 @@ def salva_gabarito(request, vestibular_id):
                     vestibular=vestibular,
                     numero=questao_data['numero'],
                     resposta_geral = questao_data['resposta_geral'],
-                    eh_idioma=questao_data['eh_idioma']
+                    eh_idioma=questao_data['eh_idioma'],
+                    anulada=questao_data.get('anulada', False)
                 )
 
                 if questao.eh_idioma:

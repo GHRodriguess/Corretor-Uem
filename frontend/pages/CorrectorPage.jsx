@@ -228,6 +228,8 @@ export default function CorrectorPage() {
 
     const calculateScore = () => {
         let totalObjectiveScore = 0;
+        let qQuestoesGabaritadas = 0;
+        let qQuestoesZeradas = 0;
         const feedback = {};
 
         for (const qNumber in gabarito) {
@@ -273,12 +275,19 @@ export default function CorrectorPage() {
                 };
             }
 
+            if (questionScore == 6) {
+                qQuestoesGabaritadas += 1;
+            }
+            else if (questionScore == 0) {
+                qQuestoesZeradas += 1;
+            }
+
             totalObjectiveScore += questionScore;
         }
 
         setQuestionFeedback(feedback);
         const finalScore = totalObjectiveScore + (parseInt(redacaoScore) || 0);
-        setResults({ objective: totalObjectiveScore, final: finalScore });
+        setResults({ objective: totalObjectiveScore, final: finalScore , qQuestoesGabaritadas: qQuestoesGabaritadas, qQuestoesZeradas: qQuestoesZeradas});
     };
 
     return (
@@ -320,17 +329,25 @@ export default function CorrectorPage() {
                     <Calculator size={24} />
                     <span>Calcular Score Final</span>
                 </button>
-
+                {console.log(results)}
                 {results && (
                     <div className="bg-gray-700 p-6 rounded-xl text-center border border-gray-600 animate-slide-in-up">
                         <h3 className="text-3xl font-bold mb-4 text-white">Seu Resultado</h3>
-                        <p className="text-xl flex items-center justify-center space-x-2">
+                        <p className="w-full text-xl text-wh text-gray-50  flex items-center justify-center space-x-2">
                             <ArrowRight className="text-yellow-400" size={20} />
                             <span>Score das Questões Objetivas: <span className="font-bold text-yellow-400">{results.objective.toFixed(2)}</span></span>
                         </p>
-                        <p className="text-xl mt-4 flex items-center justify-center space-x-2">
+                        <p className="text-xl mt-4 text-gray-50 flex items-center justify-center space-x-2">
                             <ArrowRight className="text-green-400" size={20} />
                             <span>Score Final: <span className="font-bold text-green-400">{results.final.toFixed(2)}</span></span>
+                        </p>
+                        <p className="text-xl mt-4 text-gray-50 flex items-center justify-center space-x-2">
+                            <ArrowRight className="text-green-400" size={20} />
+                            <span>Você acertou completamente: <span className="font-bold text-green-400">{results.qQuestoesGabaritadas}</span> questões</span>
+                        </p>
+                        <p className="text-xl mt-4 text-gray-50 flex items-center justify-center space-x-2">
+                            <ArrowRight className="text-red-600" size={20} />
+                            <span>Você zerou: <span className="font-bold text-red-600">{results.qQuestoesZeradas}</span> questões</span>
                         </p>
                     </div>
                 )}

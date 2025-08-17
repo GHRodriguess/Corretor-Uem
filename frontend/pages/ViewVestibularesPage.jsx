@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Calculator, ArrowRight } from "lucide-react";
 
 function ViewVestibularesPage() {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ function ViewVestibularesPage() {
     const fetchVestibulares = async () => {
         try {
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
-            
+
             const response_vestibulares = await fetch(apiBaseUrl + "vestibulares");
             if (!response_vestibulares.ok) {
                 throw new Error("Erro ao carregar a lista de vestibulares.");
@@ -26,8 +27,8 @@ function ViewVestibularesPage() {
                 throw new Error("Erro ao carregar a lista de vestibulares.");
             }
             const data_pas = await response_pas.json();
-            setVestibulares([...data_vestibulares, ...data_pas]); 
-            
+            setVestibulares([...data_vestibulares, ...data_pas]);
+
         } catch (error) {
             setError(error.message);
         }
@@ -56,9 +57,16 @@ function ViewVestibularesPage() {
         setIsEditingGabarito(true);
     };
 
+    // Updated to handle 'anulada' field
     const handleUpdateQuestion = (index, field, value) => {
         const newQuestoes = [...editedQuestoes];
         newQuestoes[index] = { ...newQuestoes[index], [field]: value };
+        // If question is 'anulada', clear other fields
+        if (field === 'anulada' && value === true) {
+            newQuestoes[index].eh_idioma = false;
+            newQuestoes[index].resposta_geral = null;
+            newQuestoes[index].respostas_idioma = { ingles: null, espanhol: null, frances: null };
+        }
         setEditedQuestoes(newQuestoes);
     };
 
@@ -77,9 +85,11 @@ function ViewVestibularesPage() {
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
+            console.log(editedQuestoes)
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
+                
                 body: JSON.stringify({
                     vestibularId: currentVestibular.id,
                     questoes: editedQuestoes,
@@ -136,12 +146,12 @@ function ViewVestibularesPage() {
     return (
         <div className="min-h-screen w-full bg-gray-900 p-8 font-sans antialiased flex items-center justify-center text-gray-100">
             <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-700">
-                <div className="flex justify-between items-center mb-6"> 
+                <div className="flex justify-between items-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-50">
                         Vestibulares Existentes
                     </h1>
                     <button
-                        onClick={() => navigate('/add/vestibulares')} 
+                        onClick={() => navigate('/add/vestibulares')}
                         className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-green-600 hover:bg-green-700 transition duration-200"
                     >
                         Adicionar Novo Vestibular
@@ -228,58 +238,85 @@ function ViewVestibularesPage() {
                         <div className="p-6 bg-gray-700 rounded-xl space-y-4 border border-gray-600 shadow-md">
                             {editedQuestoes.map((questao, index) => (
                                 <div key={index} className="bg-gray-800 p-4 rounded-lg space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <label htmlFor={`questao-${index}`} className="text-sm font-medium text-gray-400">
-                                            Questão {index + 1}:
+                                    <div className="flex items-center gap-4 justify-between">
+                                        <label htmlFor={`questao-${index}`} className="text-lg font-bold text-gray-50">
+                                            Questão {index + 1}
                                         </label>
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                id={`anulada-${index}`}
+                                                checked={questao.anulada}
+                                                onChange={(e) => {
+                                                    const isAnulada = e.target.checked;
+                                                    handleUpdateQuestion(index, 'anulada', isAnulada);
+                                                }}
+                                                className="rounded text-red-600 bg-gray-800 border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                                            />
+                                            <label htmlFor={`anulada-${index}`} className="text-sm font-medium text-gray-400">
+                                                Anulada
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 mt-4">
+
+                                    <div className={`flex items-center gap-2 mt-4 ${questao.anulada ? 'opacity-50' : ''}`}>
                                         <input
                                             type="checkbox"
                                             id={`eh_idioma-${index}`}
                                             checked={questao.eh_idioma}
-                                            onChange={(e) => handleUpdateQuestion(index, 'eh_idioma', e.target.checked)}
-                                            className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50"
+                                            onChange={(e) => {
+                                                handleUpdateQuestion(index, 'eh_idioma', e.target.checked);
+                                                if (e.target.checked) {
+                                                    handleUpdateQuestion(index, 'resposta_geral', null);
+                                                } else {
+                                                    handleUpdateQuestion(index, 'respostas_idioma', { ingles: null, espanhol: null, frances: null });
+                                                }
+                                            }}
+                                            disabled={questao.anulada}
+                                            className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 disabled:cursor-not-allowed"
                                         />
                                         <label htmlFor={`eh_idioma-${index}`} className="text-sm font-medium text-gray-400">
                                             Questão de Idioma
                                         </label>
                                     </div>
-                                    {questao.eh_idioma ? (
-                                        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            {["espanhol", "frances", "ingles",].map(
-                                                (idioma) => (
-                                                    <div key={idioma}>
-                                                        <label
-                                                            htmlFor={`${idioma}-${index}`}
-                                                            className="block text-sm font-medium text-gray-400"
-                                                        >
-                                                            Gabarito {idioma.charAt(0).toUpperCase() + idioma.slice(1)}:
-                                                        </label>
-                                                        <input
-                                                            type="number"
-                                                            id={`${idioma}-${index}`}
-                                                            value={questao.respostas_idioma[idioma]}
-                                                            onChange={(e) => handleUpdateLanguageAnswer(index, idioma, e.target.value)}
-                                                            className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
-                                                        />
-                                                    </div>
-                                                )
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <label htmlFor={`resposta_geral-${index}`} className="block text-sm font-medium text-gray-400">
-                                                Gabarito:
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id={`resposta_geral-${index}`}
-                                                value={questao.resposta_geral}
-                                                onChange={(e) => handleUpdateQuestion(index, 'resposta_geral', e.target.value)}
-                                                className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
-                                            />
-                                        </div>
+                                    
+                                    {!questao.anulada && (
+                                        questao.eh_idioma ? (
+                                            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                {["espanhol", "frances", "ingles",].map(
+                                                    (idioma) => (
+                                                        <div key={idioma}>
+                                                            <label
+                                                                htmlFor={`${idioma}-${index}`}
+                                                                className="block text-sm font-medium text-gray-400"
+                                                            >
+                                                                Gabarito {idioma.charAt(0).toUpperCase() + idioma.slice(1)}:
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                id={`${idioma}-${index}`}
+                                                                value={questao.respostas_idioma[idioma]}
+                                                                onChange={(e) => handleUpdateLanguageAnswer(index, idioma, e.target.value)}
+                                                                className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
+                                                            />
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <label htmlFor={`resposta_geral-${index}`} className="block text-sm font-medium text-gray-400">
+                                                    Gabarito:
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id={`resposta_geral-${index}`}
+                                                    value={questao.resposta_geral}
+                                                    onChange={(e) => handleUpdateQuestion(index, 'resposta_geral', e.target.value)}
+                                                    className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
+                                                />
+                                            </div>
+                                        )
                                     )}
                                 </div>
                             ))}
