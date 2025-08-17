@@ -82,14 +82,23 @@ function ViewVestibularesPage() {
         setEditedQuestoes(newQuestoes);
     };
 
+    // Nova função para deletar uma questão
+    const handleDeleteQuestion = (index) => {
+        const newQuestoes = editedQuestoes.filter((_, i) => i !== index);
+        // Atualiza os números das questões após a exclusão
+        const renumberedQuestoes = newQuestoes.map((questao, i) => ({
+            ...questao,
+            numero: i + 1
+        }));
+        setEditedQuestoes(renumberedQuestoes);
+    };
+
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
-            console.log(editedQuestoes)
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                
                 body: JSON.stringify({
                     vestibularId: currentVestibular.id,
                     questoes: editedQuestoes,
@@ -256,6 +265,12 @@ function ViewVestibularesPage() {
                                             <label htmlFor={`anulada-${index}`} className="text-sm font-medium text-gray-400">
                                                 Anulada
                                             </label>
+                                            <button
+                                                onClick={() => handleDeleteQuestion(index)}
+                                                className="ml-4 px-3 h-8 py-1 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200"
+                                            >
+                                                Deletar Questão
+                                            </button>
                                         </div>
                                     </div>
 
