@@ -184,6 +184,7 @@ def salva_gabarito(request, vestibular_id):
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
+            print("Dados recebidos:", data) 
             vestibular_id = data.get('vestibularId')
             questoes_data = data.get('questoes')
 
