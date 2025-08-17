@@ -191,6 +191,9 @@ def salva_gabarito(request, vestibular_id):
             Questao.objects.filter(vestibular=vestibular).delete()
             
             for questao_data in questoes_data:                
+                anulada = str(questao_data.get('anulada', False))
+                if not type(anulada == bool):
+                    anulada = True if anulada == 'true' else False
                 
                 questao = Questao.objects.create(
                     vestibular=vestibular,
