@@ -38,7 +38,7 @@ class Questao(models.Model):
     )
     
     numero = models.IntegerField()   
-    resposta_geral = models.IntegerField(null=True)
+    resposta_geral = models.IntegerField(null=True, blank=True)
     eh_idioma = models.BooleanField(default=False)
     anulada = models.BooleanField(default=False)
     
