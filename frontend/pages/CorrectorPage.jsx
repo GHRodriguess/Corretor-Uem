@@ -105,8 +105,7 @@ export default function CorrectorPage() {
     useEffect(() => {
         async function getVestibular(id) {
             try {
-                setLoading(true)
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                setLoading(true)                
                 const response = await fetch(
                     import.meta.env.VITE_BASE_URL_API + `get_vestibular_by_id/${id}`
                 );

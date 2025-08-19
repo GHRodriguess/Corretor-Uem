@@ -10,8 +10,7 @@ function HomePage() {
 
     useEffect(() => {
         const fetchData = async (endpoint, setter) => {
-            try {
-                await new Promise(resolve => setTimeout(resolve, 2000));
+            try {                
                 const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
                 const response = await fetch(apiBaseUrl + endpoint);
                 if (!response.ok) {
