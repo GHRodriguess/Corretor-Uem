@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 import HomePage from '../pages/HomePage';
+import VestibularesPasPage from "../pages/VestibularesPasPage"
 import VestibularesPage from '../pages/VestibularesPage';
 import PasYearSelectionPage from '../pages/PasYearSelectionPage';
 import PasSerieSelectionPage from '../pages/PasSerieSelectionPage';
@@ -19,8 +20,9 @@ function App() {
                 
                 <main className="flex-grow h-full bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-3 flex flex-col items-center justify-center">
                     <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/vestibulares" element={<VestibularesPage />} />                        
+                        <Route path="/" element={<HomePage />} /> 
+                        <Route path='/vestibulares-pas' element={< VestibularesPasPage />} />   
+                        <Route path="/vestibulares" element={< VestibularesPage />} />                     
                         <Route path="/pas" element={< PasYearSelectionPage />} />
                         <Route path="/pas/:pasYear/serie" element={<PasSerieSelectionPage />} />                        
                         <Route path="/selecionar-idioma/:vestibularId/:serieId" element={<LanguageSelectionPage />} />

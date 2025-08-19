@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Circle, CheckCircle, Calculator, ArrowRight } from "lucide-react";
+import LoadingComponent from "../components/LoadingComponent";
 
 const Question = ({ questionNumber, selectedAnswers, showFeedback, questionFeedback, onAnswerChange }) => {
     const options = [1, 2, 4, 8, 16];
@@ -99,10 +100,13 @@ export default function CorrectorPage() {
     const [vestibularName, setVestibularName] = useState("");
     const [vestibularYear, setVestibularYear] = useState("");
     const [gabarito, setGabarito] = useState({});
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
         async function getVestibular(id) {
             try {
+                setLoading(true)
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 const response = await fetch(
                     import.meta.env.VITE_BASE_URL_API + `get_vestibular_by_id/${id}`
                 );
@@ -116,6 +120,7 @@ export default function CorrectorPage() {
                 const data = await response.json();
                 setVestibularName(data.nome);
                 setVestibularYear(data.ano);
+                setLoading(false)
             } catch (error) {
                 console.error("Erro ao buscar vestibular:", error);
                 setVestibularName("Vestibular não encontrado");
@@ -296,18 +301,25 @@ export default function CorrectorPage() {
             <div className="space-y-6">
                 <div className="bg-gray-700 p-6 rounded-xl border border-gray-600">
                     <h3 className="text-2xl font-semibold mb-4 text-white">Questões Objetivas</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Object.keys(gabarito).map(questao => (
-                            <Question
-                                key={questao}
-                                questionNumber={questao}
-                                selectedAnswers={selectedAnswers[questao] || []}
-                                onAnswerChange={handleAnswerChange}
-                                showFeedback={!!results}
-                                questionFeedback={questionFeedback[questao]}
-                            />
-                        ))}
-                    </div>
+                    
+                        {loading ? (
+                            <LoadingComponent message="Carregando questões" />
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {Object.keys(gabarito).map(questao => (
+                                <Question
+                                    key={questao}
+                                    questionNumber={questao}
+                                    selectedAnswers={selectedAnswers[questao] || []}
+                                    onAnswerChange={handleAnswerChange}
+                                    showFeedback={!!results}
+                                    questionFeedback={questionFeedback[questao]}
+                                />))}
+                            </div>
+                        )}
+                        
+                        
+                    
                 </div>
 
                 <div className="bg-gray-700 p-6 w-full rounded-xl flex flex-col md:flex-row items-center justify-between border border-gray-600">
@@ -329,7 +341,6 @@ export default function CorrectorPage() {
                     <Calculator size={24} />
                     <span>Calcular Score Final</span>
                 </button>
-                {console.log(results)}
                 {results && (
                     <div className="bg-gray-700 p-6 rounded-xl text-center border border-gray-600 animate-slide-in-up">
                         <h3 className="text-3xl font-bold mb-4 text-white">Seu Resultado</h3>

@@ -57,11 +57,9 @@ function ViewVestibularesPage() {
         setIsEditingGabarito(true);
     };
 
-    // Updated to handle 'anulada' field
     const handleUpdateQuestion = (index, field, value) => {
         const newQuestoes = [...editedQuestoes];
         newQuestoes[index] = { ...newQuestoes[index], [field]: value };
-        // If question is 'anulada', clear other fields
         if (field === 'anulada' && value === true) {
             newQuestoes[index].eh_idioma = false;
             newQuestoes[index].resposta_geral = null;
@@ -82,10 +80,8 @@ function ViewVestibularesPage() {
         setEditedQuestoes(newQuestoes);
     };
 
-    // Nova função para deletar uma questão
     const handleDeleteQuestion = (index) => {
         const newQuestoes = editedQuestoes.filter((_, i) => i !== index);
-        // Atualiza os números das questões após a exclusão
         const renumberedQuestoes = newQuestoes.map((questao, i) => ({
             ...questao,
             numero: i + 1
@@ -96,7 +92,6 @@ function ViewVestibularesPage() {
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
-            console.log(editedQuestoes)
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
