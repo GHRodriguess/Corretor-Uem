@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import React, { useState } from "react";
+import LoadingComponent from "../components/LoadingComponent";
 
 function PasSerieSelectionPage(){
     const navigate = useNavigate();
