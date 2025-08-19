@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calculator, ArrowRight } from "lucide-react";
+import LoadingComponent from "../components/LoadingComponent";
 
 function ViewVestibularesPage() {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ function ViewVestibularesPage() {
     const [vestibularToDelete, setVestibularToDelete] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     const fetchVestibulares = async () => {
         try {
@@ -34,7 +36,7 @@ function ViewVestibularesPage() {
         }
     };
     const fetchQuestoes = async (vestibularId) => {
-        try {
+        try {            
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
             const response = await fetch(`${apiBaseUrl}questoes/${vestibularId}`);
             if (!response.ok) {
@@ -92,6 +94,8 @@ function ViewVestibularesPage() {
     const handleSaveGabarito = async () => {
         const apiBaseUrl = import.meta.env.VITE_BASE_URL_API || 'http://localhost:8000/api/';
         try {
+            setLoading(true)            
+            await new Promise(resolve => setTimeout(resolve, 2000));
             const response = await fetch(apiBaseUrl + 'salva_gabarito/' + currentVestibular.id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -107,6 +111,8 @@ function ViewVestibularesPage() {
             handleCloseGabaritoEditor();
         } catch (error) {
             setError(error.message);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -198,157 +204,168 @@ function ViewVestibularesPage() {
                     </div>
                 )}
 
-                {!isEditingGabarito ? (
-                    <div className="space-y-4">
-                        {vestibulares.length === 0 ? (
-                            <p className="text-center text-gray-400">Nenhum vestibular encontrado.</p>
-                        ) : (
-                            vestibulares.map((vestibular) => (
-                                <div
-                                    key={vestibular.id}
-                                    className="bg-gray-700 p-4 rounded-lg flex justify-between items-center shadow-md"
-                                >
-                                    <div>
-                                        <h3 className="text-xl font-semibold text-gray-50">
-                                            {vestibular.nome} ({vestibular.ano})
-                                        </h3>
-                                        <p className="text-sm text-gray-400">
-                                            Tipo: {vestibular.tipo.toUpperCase()}
-                                            {vestibular.serie && ` - Série: ${vestibular.serie}`}
-                                        </p>
-                                    </div>
-                                    <div className="flex space-x-2">
-                                        <button
-                                            onClick={() => handleEditGabaritoClick(vestibular)}
-                                            className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition duration-200"
-                                        >
-                                            Editar Gabarito
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteClick(vestibular)}
-                                            className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition duration-200"
-                                        >
-                                            Deletar
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
+                {loading ? (
+                    <LoadingComponent message="Salvando Gabarito..." />
                 ) : (
-                    <div className="space-y-6">
-                        <h2 className="text-2xl font-bold text-gray-50 mb-4 text-center">
-                            Editando Gabarito: {currentVestibular.nome}
-                        </h2>
-                        <div className="p-6 bg-gray-700 rounded-xl space-y-4 border border-gray-600 shadow-md">
-                            {editedQuestoes.map((questao, index) => (
-                                <div key={index} className="bg-gray-800 p-4 rounded-lg space-y-2">
-                                    <div className="flex items-center gap-4 justify-between">
-                                        <label htmlFor={`questao-${index}`} className="text-lg font-bold text-gray-50">
-                                            Questão {index + 1}
-                                        </label>
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                id={`anulada-${index}`}
-                                                checked={questao.anulada}
-                                                onChange={(e) => {
-                                                    const isAnulada = e.target.checked;
-                                                    handleUpdateQuestion(index, 'anulada', isAnulada);
-                                                }}
-                                                className="rounded text-red-600 bg-gray-800 border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
-                                            />
-                                            <label htmlFor={`anulada-${index}`} className="text-sm font-medium text-gray-400">
-                                                Anulada
-                                            </label>
-                                            <button
-                                                onClick={() => handleDeleteQuestion(index)}
-                                                className="ml-4 px-3 h-8 py-1 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200"
-                                            >
-                                                Deletar Questão
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className={`flex items-center gap-2 mt-4 ${questao.anulada ? 'opacity-50' : ''}`}>
-                                        <input
-                                            type="checkbox"
-                                            id={`eh_idioma-${index}`}
-                                            checked={questao.eh_idioma}
-                                            onChange={(e) => {
-                                                handleUpdateQuestion(index, 'eh_idioma', e.target.checked);
-                                                if (e.target.checked) {
-                                                    handleUpdateQuestion(index, 'resposta_geral', null);
-                                                } else {
-                                                    handleUpdateQuestion(index, 'respostas_idioma', { ingles: null, espanhol: null, frances: null });
-                                                }
-                                            }}
-                                            disabled={questao.anulada}
-                                            className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 disabled:cursor-not-allowed"
-                                        />
-                                        <label htmlFor={`eh_idioma-${index}`} className="text-sm font-medium text-gray-400">
-                                            Questão de Idioma
-                                        </label>
-                                    </div>
-                                    
-                                    {!questao.anulada && (
-                                        questao.eh_idioma ? (
-                                            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                {["espanhol", "frances", "ingles",].map(
-                                                    (idioma) => (
-                                                        <div key={idioma}>
-                                                            <label
-                                                                htmlFor={`${idioma}-${index}`}
-                                                                className="block text-sm font-medium text-gray-400"
-                                                            >
-                                                                Gabarito {idioma.charAt(0).toUpperCase() + idioma.slice(1)}:
-                                                            </label>
-                                                            <input
-                                                                type="number"
-                                                                id={`${idioma}-${index}`}
-                                                                value={questao.respostas_idioma[idioma]}
-                                                                onChange={(e) => handleUpdateLanguageAnswer(index, idioma, e.target.value)}
-                                                                className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
-                                                            />
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        ) : (
+                    <>
+                        {!isEditingGabarito ? (
+                            <div className="space-y-4">
+                                {vestibulares.length === 0 ? (
+                                    <p className="text-center text-gray-400">Nenhum vestibular encontrado.</p>
+                                ) : (
+                                    vestibulares.map((vestibular) => (
+                                        <div
+                                            key={vestibular.id}
+                                            className="bg-gray-700 p-4 rounded-lg flex justify-between items-center shadow-md"
+                                        >
                                             <div>
-                                                <label htmlFor={`resposta_geral-${index}`} className="block text-sm font-medium text-gray-400">
-                                                    Gabarito:
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    id={`resposta_geral-${index}`}
-                                                    value={questao.resposta_geral}
-                                                    onChange={(e) => handleUpdateQuestion(index, 'resposta_geral', e.target.value)}
-                                                    className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
-                                                />
+                                                <h3 className="text-xl font-semibold text-gray-50">
+                                                    {vestibular.nome} ({vestibular.ano})
+                                                </h3>
+                                                <p className="text-sm text-gray-400">
+                                                    Tipo: {vestibular.tipo.toUpperCase()}
+                                                    {vestibular.serie && ` - Série: ${vestibular.serie}`}
+                                                </p>
                                             </div>
-                                        )
-                                    )}
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={() => handleEditGabaritoClick(vestibular)}
+                                                    className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition duration-200"
+                                                >
+                                                    Editar Gabarito
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteClick(vestibular)}
+                                                    className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition duration-200"
+                                                >
+                                                    Deletar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        ) : (
+                            <div className="space-y-6">
+                                <h2 className="text-2xl font-bold text-gray-50 mb-4 text-center">
+                                    Editando Gabarito: {currentVestibular.nome}
+                                </h2>
+                                <div className="p-6 bg-gray-700 rounded-xl space-y-4 border border-gray-600 shadow-md">
+                                    {editedQuestoes.map((questao, index) => (
+                                        <div key={index} className="bg-gray-800 p-4 rounded-lg space-y-2">
+                                            <div className="flex items-center gap-4 justify-between">
+                                                <label htmlFor={`questao-${index}`} className="text-lg font-bold text-gray-50">
+                                                    Questão {index + 1}
+                                                </label>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`anulada-${index}`}
+                                                        checked={questao.anulada}
+                                                        onChange={(e) => {
+                                                            const isAnulada = e.target.checked;
+                                                            handleUpdateQuestion(index, 'anulada', isAnulada);
+                                                            if (isAnulada) {
+                                                                handleUpdateQuestion(index, 'eh_idioma', false);
+                                                                handleUpdateQuestion(index, 'resposta_geral', null);
+                                                                handleUpdateQuestion(index, 'respostas_idioma', { ingles: null, espanhol: null, frances: null });
+                                                            }
+                                                        }}
+                                                        className="rounded text-red-600 bg-gray-800 border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"
+                                                    />
+                                                    <label htmlFor={`anulada-${index}`} className="text-sm font-medium text-gray-400">
+                                                        Anulada
+                                                    </label>
+                                                    <button
+                                                        onClick={() => handleDeleteQuestion(index)}
+                                                        className="ml-4 px-3 h-8 py-1 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-200"
+                                                    >
+                                                        Deletar Questão
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className={`flex items-center gap-2 mt-4 ${questao.anulada ? 'opacity-50' : ''}`}>
+                                                <input
+                                                    type="checkbox"
+                                                    id={`eh_idioma-${index}`}
+                                                    checked={questao.eh_idioma}
+                                                    onChange={(e) => {
+                                                        handleUpdateQuestion(index, 'eh_idioma', e.target.checked);
+                                                        if (e.target.checked) {
+                                                            handleUpdateQuestion(index, 'resposta_geral', null);
+                                                        } else {
+                                                            handleUpdateQuestion(index, 'respostas_idioma', { ingles: null, espanhol: null, frances: null });
+                                                        }
+                                                    }}
+                                                    disabled={questao.anulada}
+                                                    className="rounded text-purple-600 bg-gray-800 border-gray-600 shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 disabled:cursor-not-allowed"
+                                                />
+                                                <label htmlFor={`eh_idioma-${index}`} className="text-sm font-medium text-gray-400">
+                                                    Questão de Idioma
+                                                </label>
+                                            </div>
+                                            
+                                            {!questao.anulada && (
+                                                questao.eh_idioma ? (
+                                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                        {["espanhol", "frances", "ingles"].map(
+                                                            (idioma) => (
+                                                                <div key={idioma}>
+                                                                    <label
+                                                                        htmlFor={`${idioma}-${index}`}
+                                                                        className="block text-sm font-medium text-gray-400"
+                                                                    >
+                                                                        Gabarito {idioma.charAt(0).toUpperCase() + idioma.slice(1)}:
+                                                                    </label>
+                                                                    <input
+                                                                        type="number"
+                                                                        id={`${idioma}-${index}`}
+                                                                        value={questao.respostas_idioma[idioma]}
+                                                                        onChange={(e) => handleUpdateLanguageAnswer(index, idioma, e.target.value)}
+                                                                        className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
+                                                                    />
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <label htmlFor={`resposta_geral-${index}`} className="block text-sm font-medium text-gray-400">
+                                                            Gabarito:
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            id={`resposta_geral-${index}`}
+                                                            value={questao.resposta_geral}
+                                                            onChange={(e) => handleUpdateQuestion(index, 'resposta_geral', e.target.value)}
+                                                            className="mt-1 block w-full h-10 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm"
+                                                        />
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <div className="mt-6 flex justify-end space-x-4">
-                            <button
-                                onClick={handleCloseGabaritoEditor}
-                                type="button"
-                                className="px-4 py-2 rounded-lg text-white bg-gray-600 hover:bg-gray-700 transition"
-                            >
-                                Voltar
-                            </button>
-                            <button
-                                onClick={handleSaveGabarito}
-                                type="button"
-                                className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition"
-                            >
-                                Salvar Gabarito
-                            </button>
-                        </div>
-                    </div>
+                                <div className="mt-6 flex justify-end space-x-4">
+                                    <button
+                                        onClick={handleCloseGabaritoEditor}
+                                        type="button"
+                                        className="px-4 py-2 rounded-lg text-white bg-gray-600 hover:bg-gray-700 transition"
+                                    >
+                                        Voltar
+                                    </button>
+                                    <button
+                                        onClick={handleSaveGabarito}
+                                        type="button"
+                                        className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition"
+                                    >
+                                        Salvar Gabarito
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

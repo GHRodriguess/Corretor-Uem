@@ -115,8 +115,7 @@ def questoes(request, vestibular_id, idioma=None, serie=None):
                 'respostas_idioma': respostas_idioma_data,
                 'anulada': questao.anulada
             })
-        
-        print(json.dumps(questoes_serializadas, indent=4, ensure_ascii=False))
+
         return JsonResponse(questoes_serializadas, safe=False)
 
     except Vestibular.DoesNotExist:
@@ -184,7 +183,6 @@ def salva_gabarito(request, vestibular_id):
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
-            print("Dados recebidos:", data) 
             vestibular_id = data.get('vestibularId')
             questoes_data = data.get('questoes')
 
