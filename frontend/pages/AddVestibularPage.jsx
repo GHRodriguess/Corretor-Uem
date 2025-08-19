@@ -10,7 +10,7 @@ function AddVestibularPage() {
     const [successMessage, setSuccessMessage] = useState(null);
     const [tipo, setTipo] = useState('vestibular');
     const [serie, setSerie] = useState('1');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (vestibular && questoes.length === 0 && currentQuestion === null) {
