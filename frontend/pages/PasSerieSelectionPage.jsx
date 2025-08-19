@@ -6,7 +6,7 @@ import LoadingComponent from "../components/LoadingComponent";
 function PasSerieSelectionPage(){
     const navigate = useNavigate();
     const { pasYear } = useParams();
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const series = [
         { id: '1', name: '1ª Série' },
         { id: '2', name: '2ª Série' },
