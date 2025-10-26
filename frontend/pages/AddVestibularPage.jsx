@@ -197,7 +197,7 @@ function AddVestibularPage() {
                                         required
                                         value={tipo}
                                         onChange={(e) => setTipo(e.target.value)}
-                                        className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                                     >
                                         <option value="vestibular">Vestibular</option>
                                         <option value="pas">PAS</option>
@@ -216,7 +216,7 @@ function AddVestibularPage() {
                                             required
                                             value={serie}
                                             onChange={(e) => setSerie(e.target.value)}
-                                            className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                                            className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                                         >
                                             <option value="1">1ª Série</option>
                                             <option value="2">2ª Série</option>
@@ -235,7 +235,7 @@ function AddVestibularPage() {
                                         type="text"
                                         id="nome"
                                         required
-                                        className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                                     />
                                 </div>
                                 <div>
@@ -249,7 +249,7 @@ function AddVestibularPage() {
                                         type="number"
                                         id="ano"
                                         required
-                                        className="mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
+                                        className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                                     />
                                 </div>
                                 <button

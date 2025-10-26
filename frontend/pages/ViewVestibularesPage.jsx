@@ -162,7 +162,7 @@ function ViewVestibularesPage() {
                         Vestibulares Existentes
                     </h1>
                     <button
-                        onClick={() => navigate('/add/vestibulares')}
+                        onClick={() => navigate('/add-vestibulares')}
                         className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-green-600 hover:bg-green-700 transition duration-200"
                     >
                         Adicionar Novo Vestibular
