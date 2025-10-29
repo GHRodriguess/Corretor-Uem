@@ -30,10 +30,10 @@ function LoginPage() {
             }
 
             const data = await response.json();
-            console.log(data)
+
             localStorage.setItem("token", data.access);
             localStorage.setItem("refresh", data.refresh);
-            login(data.access);
+            login(data.access, data.refresh);
             navigate("/view-vestibulares");
         } catch (error) {
             setError(error.message);
