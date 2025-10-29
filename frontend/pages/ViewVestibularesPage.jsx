@@ -18,17 +18,18 @@ function ViewVestibularesPage() {
         try {
             const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
 
-            const response_vestibulares = await fetch(apiBaseUrl + "vestibulares");
+            const response_vestibulares = await fetch(apiBaseUrl + "vestibulares?ativo=false");
             if (!response_vestibulares.ok) {
                 throw new Error("Erro ao carregar a lista de vestibulares.");
             }
             const data_vestibulares = await response_vestibulares.json();
 
-            const response_pas = await fetch(apiBaseUrl + "pas/true");
+            const response_pas = await fetch(apiBaseUrl + "pas/true?ativo=false");
             if (!response_pas.ok) {
                 throw new Error("Erro ao carregar a lista de vestibulares.");
             }
             const data_pas = await response_pas.json();
+            console.log(data_pas)
             setVestibulares([...data_vestibulares, ...data_pas]);
 
         } catch (error) {

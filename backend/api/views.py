@@ -12,8 +12,13 @@ from rest_framework import status
 #GET
 
 def vestibulares(request, limit=None):
-    limit = request.GET.get('limit')    
-    vestibulares_queryset = Vestibular.objects.filter(tipo='vestibular').order_by('-ano', '-nome')
+    limit = request.GET.get('limit')   
+    somente_ativos = request.GET.get("ativo", "true").lower() == "true"
+    if somente_ativos:
+        vestibulares_queryset = Vestibular.objects.filter(tipo='vestibular', ativo=True).order_by('-ano', '-nome')
+    else:
+        vestibulares_queryset = Vestibular.objects.filter(tipo='vestibular').order_by('-ano', '-nome')
+    
     if limit:
         try:
             limit = int(limit)
@@ -26,9 +31,14 @@ def vestibulares(request, limit=None):
 
 def pas(request, limit=None, all_pas=False):
     pas_serializados = []
+    print(request.GET.get("ativo", "Não tem ativo"))
+    somente_ativos = request.GET.get("ativo", "true").lower() == "true"
     
     if all_pas == 'true':
-        vestibulares = Vestibular.objects.filter(tipo='pas').order_by('-ano', '-nome') 
+        if somente_ativos:
+            vestibulares = Vestibular.objects.filter(tipo='pas', ativo=True).order_by('-ano', '-nome') 
+        else:
+            vestibulares = Vestibular.objects.filter(tipo='pas').order_by('-ano', '-nome') 
         if vestibulares:
             for vestibular in vestibulares:
                 pas_serializados.append({
@@ -36,11 +46,15 @@ def pas(request, limit=None, all_pas=False):
                     'nome': vestibular.nome,
                     'ano': vestibular.ano,
                     'tipo': vestibular.tipo,
-                    'serie': vestibular.serie
+                    'serie': vestibular.serie,
+                    'ativo': vestibular.ativo,
                 })
             
-    else:        
-        anos_unicos = Vestibular.objects.filter(tipo='pas').order_by('-ano').values_list('ano', flat=True).distinct()
+    else:     
+        if somente_ativos:   
+            anos_unicos = Vestibular.objects.filter(tipo='pas', ativo=True).order_by('-ano').values_list('ano', flat=True).distinct()
+        else:
+            anos_unicos = Vestibular.objects.filter(tipo='pas').order_by('-ano').values_list('ano', flat=True).distinct()
         
         for ano in anos_unicos:
             vestibular = Vestibular.objects.filter(tipo='pas', ano=ano).first()
@@ -50,7 +64,8 @@ def pas(request, limit=None, all_pas=False):
                     'nome': vestibular.nome,
                     'ano': vestibular.ano,
                     'tipo': vestibular.tipo,
-                    'serie': vestibular.serie
+                    'serie': vestibular.serie,
+                    'ativo': vestibular.ativo,
                 })
 
     if limit:
@@ -60,7 +75,6 @@ def pas(request, limit=None, all_pas=False):
         except (ValueError, TypeError):
             pass
 
-    # Retorna uma JsonResponse com a lista de PAS
     return JsonResponse(pas_serializados, safe=False)
 
 def get_id_pas(request, year, serie):
@@ -241,6 +255,8 @@ def update_vestibular_status(request, vestibular_id):
 
             vestibular = Vestibular.objects.get(id=vestibular_id)
             vestibular.ativo = ativo
+            print(ativo)
+            print(vestibular.ativo)
             vestibular.save()
 
             return JsonResponse({'success': True, 'ativo': vestibular.ativo})
