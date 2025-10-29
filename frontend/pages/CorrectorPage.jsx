@@ -326,7 +326,16 @@ export default function CorrectorPage() {
                     <input
                         type="number"
                         value={redacaoScore}
-                        onChange={(e) => setRedacaoScore(Math.min(120, Math.max(0, parseInt(e.target.value) || 0)))}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (value === "") {
+                                setRedacaoScore("");
+                            } else {
+                                const num = Math.min(120, Math.max(0, parseInt(value) || 0));
+                                setRedacaoScore(num);
+                            }
+                        }}
                         className="p-3 rounded-lg bg-gray-900 text-white border border-gray-600 w-full md:w-auto text-center focus:ring-2 focus:ring-blue-500 transition-all duration-300"
                         min="0"
                         max="120"
