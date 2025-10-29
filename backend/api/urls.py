@@ -3,7 +3,8 @@ from .views import *
 
 urlpatterns = [
     # GET
-    path('vestibulares', vestibulares, name='vestibulares'),    
+    path('vestibulares', vestibulares, name='vestibulares'),   
+    path('vestibulares/update/<int:vestibular_id>/', update_vestibular_status, name='update_vestibular_status'),
     path('vestibulares/<int:limit>', vestibulares, name='vestibulares'),
     path('get_vestibular_by_id/<int:vestibular_id>', get_vestibular_by_id, name='get_vestibular_by_id'),
     path('pas', pas, name='pas'),

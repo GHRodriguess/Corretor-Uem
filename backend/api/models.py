@@ -12,6 +12,7 @@ class Vestibular(models.Model):
     ano = models.IntegerField()
     tipo = models.CharField(max_length=50 ,choices=TIPO_CHOICES, default='VESTIBULAR')
     serie = models.IntegerField(null=True, blank=True) 
+    ativo = models.BooleanField(default=True) 
     
     def __str__(self):
         if self.tipo == "PAS":

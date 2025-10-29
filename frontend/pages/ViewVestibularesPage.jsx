@@ -154,6 +154,31 @@ function ViewVestibularesPage() {
         }
     };
 
+    const handleToggleAtivo = async (vestibularId) => {
+    try {
+        const apiBaseUrl = import.meta.env.VITE_BASE_URL_API;
+
+        const vestibular = vestibulares.find((v) => v.id === vestibularId);
+        if (!vestibular) return;
+        console.log(vestibularId)
+        const response = await fetch(`${apiBaseUrl}vestibulares/update/${vestibularId}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ativo: !vestibular.ativo }),
+        });
+
+        if (!response.ok) throw new Error("Erro ao atualizar status");
+
+        setVestibulares((prev) =>
+        prev.map((v) =>
+            v.id === vestibularId ? { ...v, ativo: !v.ativo } : v
+        )
+        );
+    } catch (err) {
+        setError(err.message);
+    }
+    };
+
     return (
         <div className="min-h-screen w-full bg-gray-900 p-8 font-sans antialiased flex items-center justify-center text-gray-100">
             <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-4xl border border-gray-700">
@@ -216,8 +241,11 @@ function ViewVestibularesPage() {
                                     vestibulares.map((vestibular) => (
                                         <div
                                             key={vestibular.id}
-                                            className="bg-gray-700 p-4 rounded-lg flex justify-between items-center shadow-md"
-                                        >
+                                            className={`p-4 rounded-lg flex justify-between items-center shadow-md border 
+                                                ${vestibular.ativo
+                                                    ? "bg-gray-700 border-gray-600"
+                                                    : "bg-gray-800 border-gray-600 opacity-70"}`}
+                                            >
                                             <div>
                                                 <h3 className="text-xl font-semibold text-gray-50">
                                                     {vestibular.nome} ({vestibular.ano})
@@ -228,11 +256,22 @@ function ViewVestibularesPage() {
                                                 </p>
                                             </div>
                                             <div className="flex space-x-2">
+
                                                 <button
                                                     onClick={() => handleEditGabaritoClick(vestibular)}
                                                     className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition duration-200"
                                                 >
                                                     Editar Gabarito
+                                                </button>
+                                                <button
+                                                    onClick={() => handleToggleAtivo(vestibular.id)}
+                                                    className={`px-4 py-2 rounded-md text-sm transition-all duration-300 ${
+                                                        vestibular.ativo
+                                                        ? "bg-gray-500 hover:bg-gray-600"
+                                                        : "bg-green-600 hover:bg-green-700"
+                                                    }`}
+                                                    >
+                                                    {vestibular.ativo ? "Desativar" : "Ativar"}
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteClick(vestibular)}

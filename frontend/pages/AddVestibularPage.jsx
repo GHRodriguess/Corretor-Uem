@@ -29,6 +29,7 @@ function AddVestibularPage() {
     }, [vestibular, questoes, currentQuestion]);
 
     const enviarDadosParaAPI = async (payload) => {
+        console.log("Payload", payload)
         const url = import.meta.env.VITE_BASE_URL_API + 'adiciona_vestibular';
 
         try {
@@ -60,12 +61,13 @@ function AddVestibularPage() {
         const nome = e.target.nome.value;
         const ano = e.target.ano.value;
         const tipoProva = e.target.tipo.value;
-        const dadosVestibular = { nome, ano, tipo: tipoProva };
+        const ativo = e.target.ativo.checked;
+        const dadosVestibular = { nome, ano, tipo: tipoProva, ativo };
 
         if (tipoProva === 'pas') {
             dadosVestibular.serie = e.target.serie.value;
         }
-
+        console.log("Dados vestibular", dadosVestibular)
         setVestibular(dadosVestibular);
         setError(null);
         setSuccessMessage(null);
@@ -124,6 +126,7 @@ function AddVestibularPage() {
             newQuestoes[currentQuestionIndex] = currentQuestion;
             setQuestoes(newQuestoes);
             try {
+                console.log(vestibular)
                 await enviarDadosParaAPI({ vestibular, questoes: newQuestoes });
 
                 setSuccessMessage("Dados salvos com sucesso!");
@@ -252,12 +255,23 @@ function AddVestibularPage() {
                                         className="p-2 mt-1 block w-full h-12 rounded-lg border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 transition duration-200 ease-in-out"
                                     />
                                 </div>
+                                <div className="flex items-center mt-4">
+                                    <input
+                                        type="checkbox"
+                                        id="ativo"
+                                        defaultChecked={true}                                        
+                                        className="h-5 w-5 text-green-500 bg-gray-700 border-gray-600 rounded focus:ring-green-500"
+                                    />
+                                    <label htmlFor="ativo" className="ml-2 text-sm font-medium text-gray-400">
+                                        Vestibular ativo
+                                    </label>
+                                    </div>
                                 <button
                                     type="submit"
                                     className="w-full py-3 px-4 rounded-lg text-lg font-bold text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition duration-200 ease-in-out shadow-lg transform hover:scale-105"
                                 >
                                     Adicionar Gabarito
-                                </button>
+                                </button>                                
                             </form>
                         ) : (
                             <div className="space-y-6">

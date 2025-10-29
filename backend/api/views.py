@@ -141,7 +141,8 @@ def adiciona_vestibular(request):
                 nome=vestibular_data['nome'],
                 ano=vestibular_data['ano'],
                 tipo=vestibular_data['tipo'],
-                serie=vestibular_data.get('serie', None)
+                serie=vestibular_data.get('serie', None),
+                ativo=vestibular_data.get('ativo')
             )
 
             for questao_data in questoes_data:
@@ -230,3 +231,22 @@ def delete_vestibular(request, vestibular_id):
 
     vestibular.delete()
     return Response({'success': 'Vestibular deletado com sucesso.'}, status=status.HTTP_204_NO_CONTENT)
+
+@csrf_exempt
+def update_vestibular_status(request, vestibular_id):
+    if request.method == 'PATCH':
+        try:
+            data = json.loads(request.body)
+            ativo = data.get('ativo')
+
+            vestibular = Vestibular.objects.get(id=vestibular_id)
+            vestibular.ativo = ativo
+            vestibular.save()
+
+            return JsonResponse({'success': True, 'ativo': vestibular.ativo})
+        except Vestibular.DoesNotExist:
+            return JsonResponse({'error': 'Vestibular não encontrado'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
