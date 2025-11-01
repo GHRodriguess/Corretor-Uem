@@ -67,34 +67,7 @@ function HomePage() {
                     <span>Começar Simulação</span>
                     <ChevronRight size={24} />
                 </Link>
-            </div>
-            <div className="mt-16 md:mt-24 max-w-4xl mx-auto w-full">
-                <h2 className="text-3xl font-bold text-white mb-8">Por que usar o nosso Corretor?</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
-                        <TrendingUp size={48} className="text-blue-400 mb-4 mx-auto" />
-                        <h3 className="text-xl font-bold text-white mb-2">Análise Detalhada</h3>
-                        <p className="text-gray-400">
-                            Obtenha feedback preciso sobre sua pontuação, identificando acertos e erros em cada questão.
-                        </p>
-                    </div>
-                    <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
-                        <Compass size={48} className="text-blue-400 mb-4 mx-auto" />
-                        <h3 className="text-xl font-bold text-white mb-2">Simulação Realista</h3>
-                        <p className="text-gray-400">
-                            Nosso sistema de correção segue as regras oficiais do vestibular da UEM para uma estimativa precisa.
-                        </p>
-                    </div>
-                    <div className="p-6 bg-gray-700 rounded-xl shadow-lg border border-gray-600 transition-all duration-300 transform hover:scale-105">
-                        <Settings size={48} className="text-blue-400 mb-4 mx-auto" />
-                        <h3 className="text-xl font-bold text-white mb-2">Fácil e Rápido</h3>
-                        <p className="text-gray-400">
-                            Interface intuitiva para inserir suas respostas e obter seu resultado em segundos.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
+            </div>            
             <div className="mt-16 md:mt-24 max-w-4xl mx-auto w-full">
                 <h2 className="text-3xl font-bold text-white mb-6">Vestibulares Recentes</h2>
                 {loading ? ( 
