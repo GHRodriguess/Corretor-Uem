@@ -1,6 +1,6 @@
 # 📘 Corretor UEM
 
-**Corretor UEM** é uma aplicação web desenvolvida para ajudar estudantes a estimar suas chances de aprovação nos processos seletivos da Universidade Estadual de Maringá (UEM). A plataforma permite que o usuário insira suas notas e visualize uma simulação de classificação com base em dados de edições anteriores do Vestibular e do PAS UEM.
+**Corretor UEM** é uma aplicação web desenvolvida para ajudar estudantes a estimar suas chances de aprovação nos processos seletivos da Universidade Estadual de Maringá (UEM). A plataforma permite que você insira suas respostas e, com base no gabarito oficial, calcular sua nota nos vestibulares e PAS UEM.
 
 🔗 **Acesse agora:** [corretoruem.vercel.app](https://corretoruem.vercel.app)
 ---
