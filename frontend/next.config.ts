@@ -10,6 +10,10 @@ const nextConfig = {
                 port: "8000",
                 pathname: "/media/**",
             },
+            {
+                protocol: "https",
+                hostname: "corretoruemapi.pythonanywhere.com",
+            },
         ],
         dangerouslyAllowSVG: true,
         ...(process.env.NODE_ENV === "development" && {
