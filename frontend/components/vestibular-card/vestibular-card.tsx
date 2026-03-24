@@ -1,0 +1,80 @@
+// components/vestibular-card.tsx
+import Image from "next/image";
+import Link from "next/link";
+import { CalendarDays, FileText, ChevronRight } from "lucide-react";
+import { Vestibular } from "@/types/vestibular";
+import { Span } from "next/dist/trace";
+import { Spinner } from "../ui/spinner";
+
+interface VestibularCardProps {
+    vestibular: Vestibular;
+}
+
+export function VestibularCard({ vestibular }: VestibularCardProps) {
+    return (
+        <div className="group relative rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden flex flex-col transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_0_30px_-10px_rgba(79,70,229,0.3)] hover:scale-105 hover:-translate-y-1">
+            <div className="relative w-full overflow-hidden">
+                <Image
+                    priority 
+                    src={vestibular.imagem}
+                    alt={vestibular.nome}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="w-full h-auto transition-transform duration-500 "
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+
+                
+            </div>
+
+            <div className="p-5 flex flex-col flex-1">
+                <div className="flex items-center gap-3 text-xs font-medium text-slate-400 mb-3">
+                    <span className="flex items-center gap-1">
+                        <CalendarDays className="h-3.5 w-3.5 text-indigo-400" />
+                        {vestibular.ano}
+                    </span>
+                    <span className="h-1 w-1 rounded-full bg-slate-700" />
+                    <span className="flex items-center gap-1">
+                        <FileText className="h-3.5 w-3.5 text-indigo-400" />
+                        <span className="capitalize">{vestibular.tipo}</span>
+                    </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-white leading-tight group-hover:text-indigo-400 transition-colors mb-1 line-clamp-2">
+                    {vestibular.nome}
+                </h3>
+
+                <div className="mb-3">
+                    <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${
+                            vestibular.com_gabarito
+                                ? "bg-green-500/20 text-green-400 border-green-500/30"
+                                : "bg-slate-500/20 text-slate-400 border-slate-500/30"
+                        }`}
+                    >
+                        {vestibular.com_gabarito ? "Correção disponível" : "Aguardando gabarito" }
+                    </span>
+                </div>
+
+                <div className="mt-auto">
+                    {vestibular.com_gabarito ? (
+                        <Link
+                            href={`/selecao/${vestibular.id}`}
+                            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold transition-all active:scale-[0.98] bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20"
+                        >
+                            Corrigir Prova <ChevronRight className="h-4 w-4" />
+                        </Link>
+                    ) : (
+                        <button
+                            disabled
+                            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold bg-white/5 text-slate-400 cursor-not-allowed border border-white/5"
+                        >
+                            Aguardando Gabarito <Spinner />
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}

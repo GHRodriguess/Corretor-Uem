@@ -1,0 +1,82 @@
+"use client";
+
+import { Questao } from "../../types/questao";
+import { calcularPontuacao } from "../../lib/scoring";
+
+interface ScorePanelProps {
+    questoes: Questao[];
+    marcacoes: Record<number, number>;
+    revealed: boolean;
+    onReveal: () => void;
+    onReset: () => void;
+}
+
+export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }: ScorePanelProps) {
+    const total = questoes.reduce((acc, q) => {
+        return acc + calcularPontuacao(q.resposta, marcacoes[q.numero] ?? 0, q.anulada);
+    }, 0);
+
+    const maxPossivel = questoes.length * 6;
+    const respondidas = questoes.filter((q) => (marcacoes[q.numero] ?? 0) > 0 || q.anulada).length;
+    const pct = maxPossivel > 0 ? (total / maxPossivel) * 100 : 0;
+
+    const pctColor =
+        pct >= 70 ? "text-emerald-400" : pct >= 40 ? "text-indigo-400" : "text-red-400";
+    const barColor =
+        pct >= 70 ? "bg-emerald-500" : pct >= 40 ? "bg-indigo-500" : "bg-red-500";
+
+    return (
+        <div className="sticky top-4 rounded-2xl bg-slate-900/80 border border-white/8 p-5 space-y-4 backdrop-blur-sm shadow-xl shadow-black/40">
+            {/* Total */}
+            <div>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">
+                    Pontuação
+                </p>
+                <div className="flex items-end gap-1.5">
+                    <span className={`text-4xl font-black tabular-nums leading-none ${pctColor}`}>
+                        {total.toFixed(total % 1 === 0 ? 0 : 2)}
+                    </span>
+                    <span className="text-slate-600 text-sm mb-0.5">/ {maxPossivel}</span>
+                </div>
+            </div>
+
+            {/* Barra de progresso */}
+            <div className="space-y-1">
+                <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+                        style={{ width: `${pct}%` }}
+                    />
+                </div>
+                <div className="flex justify-between text-[10px] text-slate-600">
+                    <span>{respondidas}/{questoes.length} respondidas</span>
+                    <span>{pct.toFixed(1)}%</span>
+                </div>
+            </div>
+
+            {/* Ações */}
+            <div className="space-y-2 pt-1">
+                {!revealed ? (
+                    <button
+                        onClick={onReveal}
+                        className="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20"
+                    >
+                        Ver Gabarito
+                    </button>
+                ) : (
+                    <button 
+                        onClick={onReveal}
+                        className="flex items-center gap-1.5 text-xs font-semibold justify-center py-2 w-full rounded-xl transition-all  text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                        Gabarito visível
+                    </button>
+                )}
+                <button
+                    onClick={onReset}
+                    className="w-full py-2.5 rounded-xl text-xs font-semibold text-slate-500 border border-white/6 hover:text-slate-300 hover:border-white/12 transition-all"
+                >
+                    Limpar Respostas
+                </button>
+            </div>
+        </div>
+    );
+}
