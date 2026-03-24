@@ -79,7 +79,9 @@ export default function CorrecaoPage({
             <div className="h-full bg-[#0a0c14] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
                     <Loader2 className="h-6 w-6 text-indigo-400 animate-spin" />
-                    <p className="text-slate-500 text-sm">Carregando questões…</p>
+                    <p className="text-slate-500 text-sm">
+                        Carregando questões…
+                    </p>
                 </div>
             </div>
         );
@@ -89,8 +91,13 @@ export default function CorrecaoPage({
         return (
             <div className="h-full bg-[#0a0c14] flex items-center justify-center">
                 <div className="text-center space-y-2">
-                    <p className="text-red-400 text-sm font-semibold">{error}</p>
-                    <Link href="/" className="text-slate-500 text-xs hover:text-slate-300 underline underline-offset-4">
+                    <p className="text-red-400 text-sm font-semibold">
+                        {error}
+                    </p>
+                    <Link
+                        href="/"
+                        className="text-slate-500 text-xs hover:text-slate-300 underline underline-offset-4"
+                    >
                         Voltar ao início
                     </Link>
                 </div>
@@ -171,7 +178,6 @@ export default function CorrecaoPage({
     );
 }
 
-/* ── Mini sumário mobile ─────────────────────────────────── */
 import { calcularPontuacao } from "@/lib/scoring";
 
 function MobileSummary({
@@ -188,37 +194,87 @@ function MobileSummary({
     onReset: () => void;
 }) {
     const total = questoes.reduce(
-        (acc, q) => acc + calcularPontuacao(q.resposta, marcacoes[q.numero] ?? 0, q.anulada),
+        (acc, q) =>
+            acc +
+            calcularPontuacao(q.resposta, marcacoes[q.numero] ?? 0, q.anulada),
         0,
     );
+
+    const resumo = questoes.reduce(
+        (acc, q) => {
+            const pontos = calcularPontuacao(
+                q.resposta,
+                marcacoes[q.numero] ?? 0,
+                q.anulada,
+            );
+
+            acc.total += pontos;
+
+            if (pontos === 6) acc.acertos++;
+            else if (pontos === 0) acc.erros++;
+
+            return acc;
+        },
+        {
+            total: 0,
+            acertos: 0,
+            erros: 0,
+        },
+    );
     const max = questoes.length * 6;
-    const pct = max > 0 ? (total / max) * 100 : 0;
-    const pctColor = pct >= 70 ? "text-emerald-400" : pct >= 40 ? "text-indigo-400" : "text-red-400";
 
     return (
-        <div className="flex items-center gap-3">
-            <div className="flex-1">
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest">Pontuação</p>
-                <p className={`text-xl font-black tabular-nums leading-tight ${pctColor}`}>
-                    {total.toFixed(total % 1 === 0 ? 0 : 2)}
-                    <span className="text-slate-600 text-xs font-normal"> / {max}</span>
-                </p>
-            </div>
-            <div className="flex gap-2">
-                {!revealed && (
-                    <button
-                        onClick={onReveal}
-                        className="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all"
+        <div>
+            <div className="flex items-center gap-3">
+                <div className="flex-1">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest">
+                        Pontuação
+                    </p>
+                    <p
+                        className={`text-xl font-black tabular-nums leading-tight text-indigo-400`}
                     >
-                        Gabarito
+                        {total.toFixed(total % 1 === 0 ? 0 : 2)}
+                        <span className="text-slate-600 text-xs font-normal">
+                            {" "}
+                            / {max}
+                        </span>
+                    </p>
+                </div>
+                <div className="flex gap-2">
+                    {!revealed ? (
+                        <button
+                            onClick={onReveal}
+                            className="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all"
+                        >
+                            Ver Gabarito
+                        </button>
+                    ) : (
+                        <button
+                            onClick={onReveal}
+                            className="px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all"
+                        >
+                            Esconder Gabarito
+                        </button>
+                    )}
+                    <button
+                        onClick={onReset}
+                        className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 border border-white/8 hover:text-slate-300 transition-all"
+                    >
+                        Limpar
                     </button>
-                )}
-                <button
-                    onClick={onReset}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 border border-white/8 hover:text-slate-300 transition-all"
-                >
-                    Limpar
-                </button>
+                </div>
+            </div>
+            <div className="mt-2">
+                <div className="flex flex-col gap-2 text-xs mt-1">
+                    <span className="text-emerald-400 font-semibold">                        
+                        Você gabaritou: {resumo.acertos} {resumo.acertos == 1 ? "questão" : "questões"}
+                        
+                    </span>
+                    <span className="text-red-400 font-semibold">
+                        Você zerou: {resumo.erros} {resumo.erros == 1 ? "questão" : "questões"}
+
+                    </span>
+                </div>
             </div>
         </div>
     );

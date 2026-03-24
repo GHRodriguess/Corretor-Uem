@@ -16,14 +16,31 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
         return acc + calcularPontuacao(q.resposta, marcacoes[q.numero] ?? 0, q.anulada);
     }, 0);
 
+    const resumo = questoes.reduce(
+    (acc, q) => {
+        const pontos = calcularPontuacao(
+            q.resposta,
+            marcacoes[q.numero] ?? 0,
+            q.anulada
+        );
+
+        acc.total += pontos;
+
+        if (pontos === 6) acc.acertos++;
+        else if (pontos === 0) acc.erros++;
+
+        return acc;
+    },
+    {
+        total: 0,
+        acertos: 0,
+        erros: 0,
+    }
+);
+
     const maxPossivel = questoes.length * 6;
     const respondidas = questoes.filter((q) => (marcacoes[q.numero] ?? 0) > 0 || q.anulada).length;
     const pct = maxPossivel > 0 ? (total / maxPossivel) * 100 : 0;
-
-    const pctColor =
-        pct >= 70 ? "text-emerald-400" : pct >= 40 ? "text-indigo-400" : "text-red-400";
-    const barColor =
-        pct >= 70 ? "bg-emerald-500" : pct >= 40 ? "bg-indigo-500" : "bg-red-500";
 
     return (
         <div className="sticky top-4 rounded-2xl bg-slate-900/80 border border-white/8 p-5 space-y-4 backdrop-blur-sm shadow-xl shadow-black/40">
@@ -33,7 +50,7 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
                     Pontuação
                 </p>
                 <div className="flex items-end gap-1.5">
-                    <span className={`text-4xl font-black tabular-nums leading-none ${pctColor}`}>
+                    <span className={`text-4xl font-black tabular-nums leading-none text-indigo-400`}>
                         {total.toFixed(total % 1 === 0 ? 0 : 2)}
                     </span>
                     <span className="text-slate-600 text-sm mb-0.5">/ {maxPossivel}</span>
@@ -44,7 +61,7 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
             <div className="space-y-1">
                 <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
                     <div
-                        className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+                        className={`h-full rounded-full transition-all duration-500 bg-indigo-500`}
                         style={{ width: `${pct}%` }}
                     />
                 </div>
@@ -56,6 +73,14 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
 
             {/* Ações */}
             <div className="space-y-2 pt-1">
+                <div className="flex flex-col justify-between text-xs pb-2 text-slate-500">
+                    <span className="text-emerald-400">
+                        Você gabaritou: {resumo.acertos} {resumo.acertos == 1 ? "questão" : "questões"}
+                    </span>
+                    <span className="text-red-400">
+                        Você zerou: {resumo.erros} {resumo.erros == 1 ? "questão" : "questões"}
+                    </span>
+                </div>
                 {!revealed ? (
                     <button
                         onClick={onReveal}
@@ -67,7 +92,7 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
                     <button 
                         onClick={onReveal}
                         className="flex items-center gap-1.5 text-xs font-semibold justify-center py-2 w-full rounded-xl transition-all  text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
-                        Gabarito visível
+                        Esconder Gabarito
                     </button>
                 )}
                 <button

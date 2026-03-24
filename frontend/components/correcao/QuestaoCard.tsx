@@ -22,7 +22,7 @@ export function QuestaoCard({
     onMarcacaoChange,
     revealed,
 }: QuestaoCardProps) {
-    const pontos = calcularPontuacao(questao.resposta, marcado, questao.anulada);
+    const pontos = calcularPontuacao(questao.resposta, marcado, questao.anulada);    
     const maxPontos = 6;
     const ratio = pontos / maxPontos;
 
