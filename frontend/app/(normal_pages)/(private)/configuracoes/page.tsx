@@ -3,15 +3,14 @@ import { Vestibular } from "@/types/vestibular";
 import Link from "next/link";
 import { EditarVestibularLink } from "@/components/editar-vestibular-link";
 import { DeletarVestibular } from "@/components/deletar-vestibular";
+import next from "next";
 
 
 
 async function getVestibulares(): Promise<Vestibular[]> {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/vestibulares/`,
-        {
-            cache: "no-store"
-        },
+        {next: { revalidate: 30 }} as RequestInit
     );
 
     if (!res.ok) throw new Error("Falha ao buscar vestibulares");
