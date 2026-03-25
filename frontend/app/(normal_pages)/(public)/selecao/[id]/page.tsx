@@ -5,7 +5,7 @@ import { SelecaoForm } from "./SelecaoForm";
 async function getVestibular(id: string): Promise<Vestibular | null> {
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/vestibulares/${id}/`,
-        { next: { revalidate: 120 } } as RequestInit
+        { next: { revalidate: 60 } } as RequestInit
     );
 
     if (!res.ok) return null;
@@ -17,7 +17,7 @@ async function getSeries(vestibular: Vestibular): Promise<Vestibular[]> {
 
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/vestibulares/?nome=${encodeURIComponent(vestibular.nome)}&ano=${vestibular.ano}&tipo=pas`,
-        { next: { revalidate: 120 } } as RequestInit
+        { next: { revalidate: 60 } } as RequestInit
     );
 
     if (!res.ok) return [];

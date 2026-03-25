@@ -6,8 +6,8 @@ import { Vestibular } from "@/types/vestibular";
 
 async function getVestibulares(): Promise<Vestibular[]> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vestibulares/compactados/`, {
-        next: { revalidate: 120 },
-    });
+        next: { revalidate: 60 }
+    }  as RequestInit );
 
     if (!res.ok) throw new Error("Falha ao buscar vestibulares");
 
