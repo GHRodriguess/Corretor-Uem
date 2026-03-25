@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
     ArrowLeft, Globe, Layers, ChevronRight,
     SlidersHorizontal, HelpCircle, X,
-    Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { Vestibular } from "@/types/vestibular";
@@ -205,7 +204,7 @@ export function SelecaoForm({
                                 className="ml-0.5 text-slate-600 hover:text-indigo-400 transition-colors"
                                 aria-label="Saiba mais sobre os modos de correção"
                             >
-                                <HelpCircle className="h-3.5 w-3.5" />
+                                <HelpCircle className="h-4.5 w-4.5 hover:scale-125 transition-all animate-bounce" />
                             </button>
                         </label>
                         <div className="grid grid-cols-2 gap-3">
