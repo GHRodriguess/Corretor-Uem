@@ -19,6 +19,23 @@ class QuestaoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(vestibular=vestibular)
         
         return queryset
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().prefetch_related("gabaritos_idioma")
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data
+
+        questoes_com_idioma = queryset.filter(resposta_geral__isnull=True)
+        idiomas_map = {}
+        for q in questoes_com_idioma:
+            idiomas_map[q.id] = list(
+                q.gabaritos_idioma.values("idioma", "resposta", "anulada")
+            )
+
+        for item in data:
+            item["gabaritos_idioma"] = idiomas_map.get(item["id"], [])
+            
+        return Response(data)
 
     @extend_schema(
         parameters=[
