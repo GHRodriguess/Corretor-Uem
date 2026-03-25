@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig = {
-    allowedDevOrigins: ["192.168.0.105"],
+    allowedDevOrigins: ["192.168.0.104"],
     images: {
         remotePatterns: [
             {

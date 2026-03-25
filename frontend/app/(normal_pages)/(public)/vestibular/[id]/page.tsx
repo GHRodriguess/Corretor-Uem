@@ -70,8 +70,7 @@ export default function CorrecaoPage({
     const handleModoChange = (novoModo: Modo) => {
         setModo(novoModo);
         sessionStorage.setItem("modoCorrecao", novoModo);
-        // Limpa marcações ao trocar modo para evitar confusão
-        handleReset();
+        
     };
 
     if (loading) {
