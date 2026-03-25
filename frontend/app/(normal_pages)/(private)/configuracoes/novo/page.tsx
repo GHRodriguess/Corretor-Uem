@@ -127,7 +127,6 @@ export default function NovoVestibular() {
             </div>
 
             <div className="relative container mx-auto px-4 py-10 max-w-2xl">
-                {/* Header */}
                 <div className="mb-10">
                     <Link
                         href="/configuracoes"
@@ -146,9 +145,7 @@ export default function NovoVestibular() {
                     </p>
                 </div>
 
-                {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Nome */}
                     <Field
                         icon={<BookOpen className="h-4 w-4" />}
                         label="Nome"
@@ -166,7 +163,6 @@ export default function NovoVestibular() {
                         />
                     </Field>
 
-                    {/* Ano + Tipo */}
                     <div className="grid grid-cols-2 gap-4">
                         <Field
                             icon={<Calendar className="h-4 w-4" />}
@@ -216,7 +212,6 @@ export default function NovoVestibular() {
                         </Field>
                     </div>
 
-                    {/* Série — apenas PAS */}
                     <div
                         className={`transition-all duration-300 overflow-hidden ${
                             isPas
@@ -248,7 +243,6 @@ export default function NovoVestibular() {
                         </Field>
                     </div>
 
-                    {/* Imagem */}
                     <Field
                         required
                         icon={<ImagePlus className="h-4 w-4" />}
@@ -286,7 +280,6 @@ export default function NovoVestibular() {
                         </label>
                     </Field>
 
-                    {/* Toggles */}
                     <div className="rounded-2xl border border-white/10 bg-slate-900/40 divide-y divide-white/5 overflow-hidden">
                         
                         <Toggle
@@ -298,14 +291,12 @@ export default function NovoVestibular() {
                         />
                     </div>
 
-                    {/* Error */}
                     {error && (
                         <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
                             {error}
                         </div>
                     )}
 
-                    {/* Actions */}
                     <div className="flex items-center justify-end gap-3 pt-2">
                         <Link
                             href="/configuracoes"

@@ -106,13 +106,11 @@ export default function CorrecaoPage({
 
     return (
         <div className="min-h-screen bg-[#0a0c14]">
-            {/* Ambient glow */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden">
                 <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-150 h-75 rounded-full bg-indigo-600/8 blur-[120px]" />
             </div>
 
             <div className="relative container mx-auto px-4 py-10 max-w-5xl">
-                {/* Topbar */}
                 <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
                     <Link
                         href="/"
@@ -125,9 +123,7 @@ export default function CorrecaoPage({
                     <ModoToggle modo={modo} onChange={handleModoChange} />
                 </div>
 
-                {/* Layout principal */}
                 <div className="flex gap-6 items-start">
-                    {/* Questões em ordem */}
                     <div className="flex-1 min-w-0">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {[...questoes]
@@ -145,7 +141,6 @@ export default function CorrecaoPage({
                         </div>
                     </div>
 
-                    {/* Painel lateral sticky */}
                     <div className="hidden lg:block w-56 shrink-0">
                         <ScorePanel
                             questoes={questoes}
@@ -157,7 +152,6 @@ export default function CorrecaoPage({
                     </div>
                 </div>
 
-                {/* Painel mobile (fixado no rodapé) */}
                 <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 pt-2 bg-linear-to-t from-[#0a0c14] to-transparent">
                     <div className="rounded-2xl bg-slate-900/95 border border-white/8 px-4 py-3 backdrop-blur-sm shadow-2xl shadow-black/60">
                         <MobileSummary
@@ -170,7 +164,6 @@ export default function CorrecaoPage({
                     </div>
                 </div>
 
-                {/* Espaço no mobile para não cobrir últimas questões */}
                 <div className="lg:hidden h-28" />
             </div>
         </div>

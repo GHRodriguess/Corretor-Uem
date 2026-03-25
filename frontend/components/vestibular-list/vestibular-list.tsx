@@ -29,7 +29,6 @@ export function VestibularList({ vestibulares }: VestibularListProps) {
 
     return (
         <>
-            {/* Hero / Search Section */}
             <section className="relative mb-16 overflow-hidden rounded-3xl bg-slate-950 border border-white/5 p-8 lg:p-12">
                 <div className="absolute -top-24 -right-24 h-64 w-64 bg-indigo-600/20 blur-[100px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 h-64 w-64 bg-purple-600/10 blur-[100px] rounded-full" />
@@ -60,7 +59,6 @@ export function VestibularList({ vestibulares }: VestibularListProps) {
                             
                         </div>
 
-                        {/* Filter dropdown */}
                         <div className="relative">
                             <select
                                 value={filterAtivo }
@@ -89,7 +87,6 @@ export function VestibularList({ vestibulares }: VestibularListProps) {
                 </div>
             </section>
 
-            {/* Header da lista */}
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h2 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -108,7 +105,6 @@ export function VestibularList({ vestibulares }: VestibularListProps) {
                 </div>
             </div>
 
-            {/* Grid ou empty state */}
             {filtered.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filtered.map((v) => (

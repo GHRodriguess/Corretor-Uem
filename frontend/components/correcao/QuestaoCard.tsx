@@ -67,7 +67,6 @@ export function QuestaoCard({
                 ${cardBorder} ${cardGlow}
             `}
         >
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
@@ -85,7 +84,6 @@ export function QuestaoCard({
                     )}
                 </div>
 
-                {/* Pontuação */}
                 <div className="text-right">
                     <span className={`text-base font-bold tabular-nums transition-colors ${pontoColor}`}>
                         {revealed || questao.anulada ? pontos.toFixed(pontos % 1 === 0 ? 0 : 2) : "—"}
@@ -94,7 +92,6 @@ export function QuestaoCard({
                 </div>
             </div>
 
-            {/* Selector */}
             {questao.anulada ? (
                 <div className="flex items-center justify-center h-9 rounded-lg bg-amber-500/5 border border-amber-500/10">
                     <span className="text-xs text-amber-500/70">Pontuação automática</span>
@@ -111,7 +108,6 @@ export function QuestaoCard({
                 />
             )}
 
-            {/* Gabarito revelado */}
             {revealed && !questao.anulada && (
                 <div className="pt-1 border-t border-white/5">
                     <div className="flex items-center gap-2 flex-wrap">

@@ -241,7 +241,6 @@ export default function VestibularConfigPage({
 
             <div className="relative container mx-auto px-4 py-10 max-w-2xl space-y-12">
 
-                {/* Header */}
                 <div>
                     <Link
                         href="/configuracoes"
@@ -258,7 +257,6 @@ export default function VestibularConfigPage({
                     </p>
                 </div>
 
-                {/* ══ SEÇÃO 1 — Editar Vestibular ══ */}
                 <section>
                     <SectionHeader number="01" title="Informações do Vestibular" />
 
@@ -387,7 +385,6 @@ export default function VestibularConfigPage({
 
                 <div className="border-t border-white/5" />
 
-                {/* ══ SEÇÃO 2 — Questões ══ */}
                 <section>
                     <SectionHeader number="02" title={`Questões (${questoes.length})`} />
 
@@ -445,7 +442,6 @@ export default function VestibularConfigPage({
                         <p className="mt-4 mb-8 text-sm text-slate-600">Nenhuma questão cadastrada ainda.</p>
                     )}
 
-                    {/* Form nova questão */}
                     <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-5">
                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-5">
                             Adicionar Questão

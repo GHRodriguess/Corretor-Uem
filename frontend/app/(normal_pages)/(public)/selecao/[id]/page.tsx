@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 import { Vestibular } from "@/types/vestibular";
 
+
+
 type Idioma = "ingles" | "espanhol" | "frances";
 type ModoCorrecao = "padrao" | "simplificada";
 
@@ -52,7 +54,6 @@ function TooltipModal({
             className="fixed inset-0 z-50 flex items-center justify-center px-4"
             onClick={onClose}
         >
-            {/* backdrop */}
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
             <div
@@ -109,7 +110,7 @@ export default function SelecaoPage({
 
     const [serieSelecionada, setSerieSelecionada] = useState<Vestibular | null>(null);
     const [idioma, setIdioma] = useState<Idioma | null>(null);
-    const [modo, setModo] = useState<ModoCorrecao | null>(null);
+    const [modo, setModo] = useState<ModoCorrecao | null>("padrao");
     const [tooltipAberto, setTooltipAberto] = useState(false);
 
     useEffect(() => {
@@ -193,7 +194,6 @@ export default function SelecaoPage({
                     Voltar
                 </Link>
 
-                {/* Título */}
                 <div className="mb-10">
                     <h1 className="text-white text-3xl font-bold tracking-tight">
                         {vestibular.nome}
@@ -204,7 +204,6 @@ export default function SelecaoPage({
                 </div>
 
                 <div className="space-y-8">
-                    {/* Seleção de série (só PAS) */}
                     {isPas && (
                         <div className="space-y-3">
                             <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -230,7 +229,6 @@ export default function SelecaoPage({
                         </div>
                     )}
 
-                    {/* Seleção de idioma */}
                     <div className="space-y-3">
                         <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             <Globe className="h-4 w-4 text-slate-600" />
@@ -255,7 +253,6 @@ export default function SelecaoPage({
                         </div>
                     </div>
 
-                    {/* Seleção de modo de correção */}
                     <div className="space-y-3">
                         <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             <SlidersHorizontal className="h-4 w-4 text-slate-600" />

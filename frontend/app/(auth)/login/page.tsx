@@ -89,7 +89,7 @@ export default function Login() {
 
                     <form className="space-y-4" onSubmit={handleSubmit}>
                         <div className="space-y-1.5">
-                            <Label
+                            <Label                            
                                 aria-required
                                 className="text-white/50 text-xs tracking-wide uppercase font-normal"
                             >

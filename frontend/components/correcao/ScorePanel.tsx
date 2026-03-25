@@ -44,7 +44,6 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
 
     return (
         <div className="sticky top-4 rounded-2xl bg-slate-900/80 border border-white/8 p-5 space-y-4 backdrop-blur-sm shadow-xl shadow-black/40">
-            {/* Total */}
             <div>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">
                     Pontuação
@@ -57,7 +56,6 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
                 </div>
             </div>
 
-            {/* Barra de progresso */}
             <div className="space-y-1">
                 <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
                     <div
@@ -71,7 +69,6 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
                 </div>
             </div>
 
-            {/* Ações */}
             <div className="space-y-2 pt-1">
                 <div className="flex flex-col justify-between text-xs pb-2 text-slate-500">
                     <span className="text-emerald-400">

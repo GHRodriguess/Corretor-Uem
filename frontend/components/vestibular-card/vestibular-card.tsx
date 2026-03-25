@@ -5,28 +5,33 @@ import { CalendarDays, FileText, ChevronRight } from "lucide-react";
 import { Vestibular } from "@/types/vestibular";
 import { Span } from "next/dist/trace";
 import { Spinner } from "../ui/spinner";
+import { Button } from "../ui/button";
 
 interface VestibularCardProps {
     vestibular: Vestibular;
 }
 
 export function VestibularCard({ vestibular }: VestibularCardProps) {
+    const href = vestibular.com_gabarito ? `/selecao/${vestibular.id}` : "/"
+
     return (
         <div className="group relative rounded-2xl border border-white/10 bg-slate-900/40 overflow-hidden flex flex-col transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_0_30px_-10px_rgba(79,70,229,0.3)] hover:scale-105 hover:-translate-y-1">
-            <div className="relative w-full overflow-hidden">
-                <Image
-                    priority 
-                    src={vestibular.imagem}
-                    alt={vestibular.nome}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="w-full h-auto transition-transform duration-500 "
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
+            <Link href={href} >
+                <div className="relative w-full overflow-hidden">
+                    <Image
+                        priority 
+                        src={vestibular.imagem}
+                        alt={vestibular.nome}
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        className="w-full h-auto transition-transform duration-500 "
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-80" />
 
-                
-            </div>
+                    
+                </div>
+            </Link>
 
             <div className="p-5 flex flex-col flex-1">
                 <div className="flex items-center gap-3 text-xs font-medium text-slate-400 mb-3">
@@ -59,9 +64,11 @@ export function VestibularCard({ vestibular }: VestibularCardProps) {
 
                 <div className="mt-auto">
                     {vestibular.com_gabarito ? (
+                        
                         <Link
-                            href={`/selecao/${vestibular.id}`}
+                            href={href}
                             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold transition-all active:scale-[0.98] bg-indigo-600 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-600/20"
+                        
                         >
                             Corrigir Prova <ChevronRight className="h-4 w-4" />
                         </Link>

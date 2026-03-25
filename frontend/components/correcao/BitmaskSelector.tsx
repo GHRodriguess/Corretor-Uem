@@ -18,7 +18,6 @@ export function BitmaskSelector({ value, onChange, disabled }: BitmaskSelectorPr
 
     return (
         <div className="space-y-2">
-            {/* Soma atual */}
             <div className="flex items-center justify-between">
                 <span className="text-[11px] text-slate-500 uppercase tracking-widest font-medium">
                     Soma
@@ -32,7 +31,6 @@ export function BitmaskSelector({ value, onChange, disabled }: BitmaskSelectorPr
                 </span>
             </div>
 
-            {/* Botões de bit */}
             <div className="flex gap-1.5">
                 {BITS.map((bit) => {
                     const active = (value & bit) !== 0;

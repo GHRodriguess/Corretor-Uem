@@ -56,7 +56,6 @@ export default async function Configuracoes() {
                                 key={v.id}
                                 className="flex items-center justify-between gap-4 px-6 py-4 bg-slate-900/40 hover:bg-slate-900/70 transition-colors"
                             >
-                                {/* Info */}
                                 <div className="flex items-center gap-4 min-w-0">
                                     <div className="min-w-0">
                                         <p className="text-white font-medium truncate">
