@@ -414,7 +414,7 @@ export default function VestibularConfigPage({
                                                         {q.gabaritos_idioma?.map((g) => (
                                                             <span key={g.idioma} className="text-xs text-slate-500 capitalize">
                                                                 {g.idioma}:{" "}
-                                                                <span className="text-slate-300">{g.resposta}</span>
+                                                                <span className="text-slate-300">{g.anulada ? "Anulada" : g.resposta }</span>
                                                             </span>
                                                         ))}
                                                     </>

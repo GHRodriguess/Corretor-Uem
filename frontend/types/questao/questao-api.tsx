@@ -4,5 +4,5 @@ export interface QuestaoAPI {
     numero: number;
     anulada: boolean;
     resposta_geral: number | null;
-    gabaritos_idioma?: { idioma: string; resposta: number }[];
+    gabaritos_idioma?: { idioma: string; resposta: number, anulada: Boolean }[];
 }

@@ -56,17 +56,17 @@ export default async function Configuracoes() {
                                 key={v.id}
                                 className="flex items-center justify-between gap-4 px-6 py-4 bg-slate-900/40 hover:bg-slate-900/70 transition-colors"
                             >
-                                <div className="flex items-center gap-4 min-w-0">
-                                    <div className="min-w-0">
-                                        <p className="text-white font-medium truncate">
+                                <div className="flex flex-col items-center gap-4 min-w-0">
+                                    <div className="min-w-0 max-w-full">
+                                        <p className="text-white font-medium text-nowrap truncate ">
                                             {v.nome}
                                         </p>
-                                        <div className="flex items-center gap-2 mt-0.5">
+                                        <div className="flex flex-col items-start gap-2 mt-0.5">
                                             <span className="text-xs text-slate-500 capitalize">
                                                     {v.tipo} · {v.ano} {v.serie ? ` · ${v.serie}ª` : ""}
                                             </span>
                                             <span
-                                                className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                                                className={`text-[10px] font-bold text-center text-nowrap max-w-full truncate uppercase px-2 py-0.5 rounded-full ${
                                                     v.com_gabarito
                                                         ? "bg-green-500/20 text-green-400"
                                                         : "bg-slate-500/20 text-slate-400"
