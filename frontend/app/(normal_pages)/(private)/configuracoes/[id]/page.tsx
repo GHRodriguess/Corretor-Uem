@@ -227,98 +227,98 @@ export default function VestibularConfigPage({
     }
 
     function startEditQuestao(q: QuestaoAPI) {
-    const isIdioma = q.resposta_geral === null;
-    const gi = q.gabaritos_idioma ?? [];
-    const get = (lang: string) => gi.find((g) => g.idioma === lang);
-    setEditingQuestaoId(q.id!);
-    setEditQuestaoForm({
-        numero: q.numero,
-        anulada: q.anulada,
-        is_idioma: isIdioma,
-        resposta_geral: isIdioma ? "" : q.resposta_geral ?? "",
-        espanhol: String(get("espanhol")?.resposta ?? ""),
-        frances:  String(get("frances")?.resposta  ?? ""),
-        ingles:   String(get("ingles")?.resposta   ?? ""),
-        anulada_ingles:   get("ingles")?.anulada   ?? false,
-        anulada_espanhol: get("espanhol")?.anulada ?? false,
-        anulada_frances:  get("frances")?.anulada  ?? false,
-    });
-    setEditQuestaoError(null);
-}
-
-async function handleSaveEditQuestao(q: QuestaoAPI) {
-    if (!editQuestaoForm) return;
-    setEditQuestaoError(null);
-
-    if (!editQuestaoForm.is_idioma && editQuestaoForm.resposta_geral === "")
-        return setEditQuestaoError("Informe a resposta.");
-    if (editQuestaoForm.is_idioma) {
-        const precisaIngles   = !editQuestaoForm.anulada_ingles   && editQuestaoForm.ingles === "";
-        const precisaEspanhol = !editQuestaoForm.anulada_espanhol && editQuestaoForm.espanhol === "";
-        const precisaFrances  = !editQuestaoForm.anulada_frances  && editQuestaoForm.frances === "";
-        if (precisaIngles || precisaEspanhol || precisaFrances)
-            return setEditQuestaoError("Informe a resposta ou marque como anulada para cada idioma.");
-    }
-
-    setSavingEditQuestao(true);
-    try {
-        const token = localStorage.getItem("access_token");
-
-        const body = {
-            anulada: editQuestaoForm.anulada,
-            resposta_geral: editQuestaoForm.is_idioma ? null : Number(editQuestaoForm.resposta_geral),
-        };
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes/${q.id}/`, {
-            method: "PATCH",
-            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-            body: JSON.stringify(body),
+        const isIdioma = q.resposta_geral === null;
+        const gi = q.gabaritos_idioma ?? [];
+        const get = (lang: string) => gi.find((g) => g.idioma === lang);
+        setEditingQuestaoId(q.id!);
+        setEditQuestaoForm({
+            numero: q.numero,
+            anulada: q.anulada,
+            is_idioma: isIdioma,
+            resposta_geral: isIdioma ? "" : q.resposta_geral ?? "",
+            espanhol: Number(get("espanhol")?.resposta ?? ""),
+            frances:  Number(get("frances")?.resposta  ?? ""),
+            ingles:   Number(get("ingles")?.resposta   ?? ""),
+            anulada_ingles:   get("ingles")?.anulada   ?? false,
+            anulada_espanhol: get("espanhol")?.anulada ?? false,
+            anulada_frances:  get("frances")?.anulada  ?? false,
         });
-        if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(Object.values(data).flat().join(" ") || "Erro ao salvar.");
-        }
-        const updated: QuestaoAPI = await res.json();
-
-        if (editQuestaoForm.is_idioma) {
-            const gi = q.gabaritos_idioma ?? [];
-            const idiomas = [
-                { idioma: "espanhol", resposta: Number(editQuestaoForm.espanhol), anulada: editQuestaoForm.anulada_espanhol },
-                { idioma: "frances",  resposta: Number(editQuestaoForm.frances),  anulada: editQuestaoForm.anulada_frances },
-                { idioma: "ingles",   resposta: Number(editQuestaoForm.ingles),   anulada: editQuestaoForm.anulada_ingles },
-            ];
-            for (const ig of idiomas) {
-                const existing = gi.find((g) => g.idioma === ig.idioma);
-                if (existing?.id) {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/${existing.id}/`, {
-                        method: "PATCH",
-                        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ resposta: ig.resposta, anulada: ig.anulada }),
-                    });
-                } else {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/`, {
-                        method: "POST",
-                        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ questao: q.id, ...ig }),
-                    });
-                }
-            }
-            updated.gabaritos_idioma = idiomas.map((ig) => {
-                const existing = gi.find((g) => g.idioma === ig.idioma);
-                return { ...ig, id: existing?.id };
-            });
-        }
-
-        setQuestoes((prev) =>
-            prev.map((item) => (item.id === q.id ? updated : item)).sort((a, b) => a.numero - b.numero),
-        );
-        setEditingQuestaoId(null);
-        setEditQuestaoForm(null);
-    } catch (err: unknown) {
-        setEditQuestaoError(err instanceof Error ? err.message : "Erro inesperado.");
-    } finally {
-        setSavingEditQuestao(false);
+        setEditQuestaoError(null);
     }
-}
+
+    async function handleSaveEditQuestao(q: QuestaoAPI) {
+        if (!editQuestaoForm) return;
+        setEditQuestaoError(null);
+
+        if (!editQuestaoForm.is_idioma && editQuestaoForm.resposta_geral === "")
+            return setEditQuestaoError("Informe a resposta.");
+        if (editQuestaoForm.is_idioma) {
+            const precisaIngles   = !editQuestaoForm.anulada_ingles   && editQuestaoForm.ingles === "";
+            const precisaEspanhol = !editQuestaoForm.anulada_espanhol && editQuestaoForm.espanhol === "";
+            const precisaFrances  = !editQuestaoForm.anulada_frances  && editQuestaoForm.frances === "";
+            if (precisaIngles || precisaEspanhol || precisaFrances)
+                return setEditQuestaoError("Informe a resposta ou marque como anulada para cada idioma.");
+        }
+
+        setSavingEditQuestao(true);
+        try {
+            const token = localStorage.getItem("access_token");
+
+            const body = {
+                anulada: editQuestaoForm.anulada,
+                resposta_geral: editQuestaoForm.is_idioma ? null : Number(editQuestaoForm.resposta_geral),
+            };
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes/${q.id}/`, {
+                method: "PATCH",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(Object.values(data).flat().join(" ") || "Erro ao salvar.");
+            }
+            const updated: QuestaoAPI = await res.json();
+
+            if (editQuestaoForm.is_idioma) {
+                const gi = q.gabaritos_idioma ?? [];
+                const idiomas = [
+                    { idioma: "espanhol", resposta: Number(editQuestaoForm.espanhol), anulada: editQuestaoForm.anulada_espanhol },
+                    { idioma: "frances",  resposta: Number(editQuestaoForm.frances),  anulada: editQuestaoForm.anulada_frances },
+                    { idioma: "ingles",   resposta: Number(editQuestaoForm.ingles),   anulada: editQuestaoForm.anulada_ingles },
+                ];
+                for (const ig of idiomas) {
+                    const existing = gi.find((g) => g.idioma === ig.idioma);
+                    if (existing?.id) {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/${existing.id}/`, {
+                            method: "PATCH",
+                            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                            body: JSON.stringify({ resposta: ig.resposta, anulada: ig.anulada }),
+                        });
+                    } else {
+                        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/`, {
+                            method: "POST",
+                            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                            body: JSON.stringify({ questao: q.id, ...ig }),
+                        });
+                    }
+                }
+                updated.gabaritos_idioma = idiomas.map((ig) => {
+                    const existing = gi.find((g) => g.idioma === ig.idioma);
+                    return { ...ig, id: existing?.id };
+                });
+            }
+
+            setQuestoes((prev) =>
+                prev.map((item) => (item.id === q.id ? updated : item)).sort((a, b) => a.numero - b.numero),
+            );
+            setEditingQuestaoId(null);
+            setEditQuestaoForm(null);
+        } catch (err: unknown) {
+            setEditQuestaoError(err instanceof Error ? err.message : "Erro inesperado.");
+        } finally {
+            setSavingEditQuestao(false);
+        }
+    }
 
     // ─── Render ───────────────────────────────────────────────────────────────
 
