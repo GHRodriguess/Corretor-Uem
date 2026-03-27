@@ -18,7 +18,7 @@ class QuestaoViewSet(viewsets.ModelViewSet):
         if vestibular:
             queryset = queryset.filter(vestibular=vestibular)
         
-        return queryset
+        return queryset.order_by("numero")
     
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().prefetch_related("gabaritos_idioma")
@@ -29,7 +29,7 @@ class QuestaoViewSet(viewsets.ModelViewSet):
         idiomas_map = {}
         for q in questoes_com_idioma:
             idiomas_map[q.id] = list(
-                q.gabaritos_idioma.values("idioma", "resposta", "anulada")
+                q.gabaritos_idioma.values("id", "idioma", "resposta", "anulada")
             )
 
         for item in data:

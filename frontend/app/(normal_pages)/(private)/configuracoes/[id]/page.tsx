@@ -44,15 +44,19 @@ export default function VestibularConfigPage({
     anulada: false,
     is_idioma: false,
     resposta_geral: "",
-    ingles: "",
     espanhol: "",
     frances: "",
+    ingles: "",
     anulada_ingles: false,
     anulada_espanhol: false,
     anulada_frances: false,
 });
     const [savingQuestao, setSavingQuestao] = useState(false);
     const [questaoError, setQuestaoError] = useState<string | null>(null);
+    const [editingQuestaoId, setEditingQuestaoId] = useState<number | null>(null);
+    const [editQuestaoForm, setEditQuestaoForm] = useState<QuestaoForm | null>(null);
+    const [savingEditQuestao, setSavingEditQuestao] = useState(false);
+    const [editQuestaoError, setEditQuestaoError] = useState<string | null>(null);
 
     // ── Load inicial ──
     useEffect(() => {
@@ -87,6 +91,7 @@ export default function VestibularConfigPage({
             );
             if (rq.ok) {
                 const data = await rq.json();
+                console.log(data)
                 setQuestoes(Array.isArray(data) ? data : data.results ?? []);
             }
 
@@ -174,21 +179,22 @@ export default function VestibularConfigPage({
             const created: QuestaoAPI = await res.json();
 
             if (novaQuestao.is_idioma) {
-                const idiomas = [
+                const idiomasPayload = [
                     { idioma: "espanhol", resposta: Number(novaQuestao.espanhol), anulada: novaQuestao.anulada_espanhol },
                     { idioma: "frances",  resposta: Number(novaQuestao.frances),  anulada: novaQuestao.anulada_frances },
                     { idioma: "ingles",   resposta: Number(novaQuestao.ingles),   anulada: novaQuestao.anulada_ingles },
                 ];
-                for (const g of idiomas) {
-                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/`, {
+                const gabsComId: { id?: number; idioma: string; resposta: number; anulada: boolean }[] = [];
+                for (const g of idiomasPayload) {
+                    const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/`, {
                         method: "POST",
                         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
                         body: JSON.stringify({ questao: created.id, ...g }),
                     });
+                    const saved = await r.json();
+                    gabsComId.push(saved);
                 }
-
-                
-                created.gabaritos_idioma = idiomas;
+                created.gabaritos_idioma = gabsComId;
             }
 
             setQuestoes((prev) => [...prev, created].sort((a, b) => a.numero - b.numero));
@@ -197,9 +203,9 @@ export default function VestibularConfigPage({
                 anulada: false,
                 is_idioma: false,
                 resposta_geral: "",
-                ingles: "",
                 espanhol: "",
                 frances: "",
+                ingles: "",
                 anulada_ingles: false,
                 anulada_espanhol: false,
                 anulada_frances: false,
@@ -211,7 +217,6 @@ export default function VestibularConfigPage({
         }
     }
 
-    // ── Deletar questão ──
     async function handleDeleteQuestao(questaoId: number) {
         const token = localStorage.getItem("access_token");
         const res = await fetch(
@@ -220,6 +225,100 @@ export default function VestibularConfigPage({
         );
         if (res.ok) setQuestoes((prev) => prev.filter((q) => q.id !== questaoId));
     }
+
+    function startEditQuestao(q: QuestaoAPI) {
+    const isIdioma = q.resposta_geral === null;
+    const gi = q.gabaritos_idioma ?? [];
+    const get = (lang: string) => gi.find((g) => g.idioma === lang);
+    setEditingQuestaoId(q.id!);
+    setEditQuestaoForm({
+        numero: q.numero,
+        anulada: q.anulada,
+        is_idioma: isIdioma,
+        resposta_geral: isIdioma ? "" : q.resposta_geral ?? "",
+        espanhol: String(get("espanhol")?.resposta ?? ""),
+        frances:  String(get("frances")?.resposta  ?? ""),
+        ingles:   String(get("ingles")?.resposta   ?? ""),
+        anulada_ingles:   get("ingles")?.anulada   ?? false,
+        anulada_espanhol: get("espanhol")?.anulada ?? false,
+        anulada_frances:  get("frances")?.anulada  ?? false,
+    });
+    setEditQuestaoError(null);
+}
+
+async function handleSaveEditQuestao(q: QuestaoAPI) {
+    if (!editQuestaoForm) return;
+    setEditQuestaoError(null);
+
+    if (!editQuestaoForm.is_idioma && editQuestaoForm.resposta_geral === "")
+        return setEditQuestaoError("Informe a resposta.");
+    if (editQuestaoForm.is_idioma) {
+        const precisaIngles   = !editQuestaoForm.anulada_ingles   && editQuestaoForm.ingles === "";
+        const precisaEspanhol = !editQuestaoForm.anulada_espanhol && editQuestaoForm.espanhol === "";
+        const precisaFrances  = !editQuestaoForm.anulada_frances  && editQuestaoForm.frances === "";
+        if (precisaIngles || precisaEspanhol || precisaFrances)
+            return setEditQuestaoError("Informe a resposta ou marque como anulada para cada idioma.");
+    }
+
+    setSavingEditQuestao(true);
+    try {
+        const token = localStorage.getItem("access_token");
+
+        const body = {
+            anulada: editQuestaoForm.anulada,
+            resposta_geral: editQuestaoForm.is_idioma ? null : Number(editQuestaoForm.resposta_geral),
+        };
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes/${q.id}/`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(Object.values(data).flat().join(" ") || "Erro ao salvar.");
+        }
+        const updated: QuestaoAPI = await res.json();
+
+        if (editQuestaoForm.is_idioma) {
+            const gi = q.gabaritos_idioma ?? [];
+            const idiomas = [
+                { idioma: "espanhol", resposta: Number(editQuestaoForm.espanhol), anulada: editQuestaoForm.anulada_espanhol },
+                { idioma: "frances",  resposta: Number(editQuestaoForm.frances),  anulada: editQuestaoForm.anulada_frances },
+                { idioma: "ingles",   resposta: Number(editQuestaoForm.ingles),   anulada: editQuestaoForm.anulada_ingles },
+            ];
+            for (const ig of idiomas) {
+                const existing = gi.find((g) => g.idioma === ig.idioma);
+                if (existing?.id) {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/${existing.id}/`, {
+                        method: "PATCH",
+                        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({ resposta: ig.resposta, anulada: ig.anulada }),
+                    });
+                } else {
+                    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/questoes-idioma/`, {
+                        method: "POST",
+                        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                        body: JSON.stringify({ questao: q.id, ...ig }),
+                    });
+                }
+            }
+            updated.gabaritos_idioma = idiomas.map((ig) => {
+                const existing = gi.find((g) => g.idioma === ig.idioma);
+                return { ...ig, id: existing?.id };
+            });
+        }
+
+        setQuestoes((prev) =>
+            prev.map((item) => (item.id === q.id ? updated : item)).sort((a, b) => a.numero - b.numero),
+        );
+        setEditingQuestaoId(null);
+        setEditQuestaoForm(null);
+    } catch (err: unknown) {
+        setEditQuestaoError(err instanceof Error ? err.message : "Erro inesperado.");
+    } finally {
+        setSavingEditQuestao(false);
+    }
+}
 
     // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -391,49 +490,160 @@ export default function VestibularConfigPage({
                     {questoes.length > 0 && (
                         <div className="mt-6 rounded-2xl border border-white/10 overflow-hidden mb-8">
                             <ul className="divide-y divide-white/5">
-                                {questoes.map((q) => (
-                                    <li
-                                        key={q.id}
-                                        className="flex items-center justify-between gap-4 px-5 py-3 bg-slate-900/40 hover:bg-slate-900/60 transition-colors"
-                                    >
-                                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                                            <span className="shrink-0 w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold flex items-center justify-center">
-                                                {q.numero}
-                                            </span>
-                                            <div className="flex items-center gap-2 flex-wrap min-w-0">
-                                                {q.resposta_geral !== null ? (
-                                                    <span className="text-sm text-slate-400">
-                                                        Resposta:{" "}
-                                                        <span className="text-white font-semibold">{q.resposta_geral}</span>
+                                {questoes.map((q) => {
+                                    const isEditing = editingQuestaoId === q.id;
+                                    const f = editQuestaoForm;
+
+                                    return (
+                                        <li key={q.id} className="bg-slate-900/40">
+                                            {/* ── Row ── */}
+                                            <div className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-slate-900/60 transition-colors">
+                                                <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                    <span className="shrink-0 w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold flex items-center justify-center">
+                                                        {q.numero}
                                                     </span>
-                                                ) : (
-                                                    <>
-                                                        <span className="flex items-center gap-1 text-xs font-medium text-amber-400">
-                                                            <Globe className="h-3 w-3" /> Idioma
-                                                        </span>
-                                                        {q.gabaritos_idioma?.map((g) => (
-                                                            <span key={g.idioma} className="text-xs text-slate-500 capitalize">
-                                                                {g.idioma}:{" "}
-                                                                <span className="text-slate-300">{g.anulada ? "Anulada" : g.resposta }</span>
+                                                    <div className="flex items-center gap-2 flex-wrap min-w-0">
+                                                        {q.resposta_geral !== null ? (
+                                                            <span className="text-sm text-slate-400">
+                                                                Resposta:{" "}
+                                                                <span className="text-white font-semibold">{q.resposta_geral}</span>
                                                             </span>
-                                                        ))}
-                                                    </>
-                                                )}
-                                                {q.anulada && (
-                                                    <span className="text-[10px] font-bold uppercase text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
-                                                        Anulada
-                                                    </span>
-                                                )}
+                                                        ) : (
+                                                            <>
+                                                                <span className="flex items-center gap-1 text-xs font-medium text-amber-400">
+                                                                    <Globe className="h-3 w-3" /> Idioma
+                                                                </span>
+                                                                {q.gabaritos_idioma?.map((g) => (
+                                                                    <span key={g.idioma} className="text-xs text-slate-500 capitalize">
+                                                                        {g.idioma}:{" "}
+                                                                        <span className="text-slate-300">{g.anulada ? "Anulada" : g.resposta}</span>
+                                                                    </span>
+                                                                ))}
+                                                            </>
+                                                        )}
+                                                        {q.anulada && (
+                                                            <span className="text-[10px] font-bold uppercase text-red-400 bg-red-500/10 px-2 py-0.5 rounded-full">
+                                                                Anulada
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-1 shrink-0">
+                                                    <button
+                                                        onClick={() => isEditing ? (setEditingQuestaoId(null), setEditQuestaoForm(null)) : startEditQuestao(q)}
+                                                        className={`p-1.5 rounded-lg transition-colors ${isEditing ? "text-indigo-400 bg-indigo-500/10" : "text-slate-600 hover:text-indigo-400 hover:bg-indigo-500/10"}`}
+                                                    >
+                                                        {/* pencil icon */}
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => q.id && handleDeleteQuestao(q.id)}
+                                                        className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <button
-                                            onClick={() => q.id && handleDeleteQuestao(q.id)}
-                                            className="shrink-0 p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
-                                    </li>
-                                ))}
+
+                                            {/* ── Inline edit panel ── */}
+                                            {isEditing && f && (
+                                                <div className="px-5 pb-5 pt-2 border-t border-white/5 space-y-4">
+
+                                                    {/* Anulada toggle */}
+                                                    <div className="rounded-xl border border-white/10 overflow-hidden">
+                                                        <Toggle
+                                                            icon={<AlertCircle className="h-4 w-4" />}
+                                                            label="Anulada"
+                                                            description="Questão sem resposta válida"
+                                                            checked={f.anulada}
+                                                            onChange={(v) => setEditQuestaoForm((p) => p && { ...p, anulada: v })}
+                                                        />
+                                                    </div>
+
+                                                    {/* Resposta geral */}
+                                                    {!f.is_idioma && (
+                                                        <Field icon={<Hash className="h-4 w-4" />} label="Resposta (0–31)" required>
+                                                            <input
+                                                                type="number"
+                                                                value={f.resposta_geral}
+                                                                onChange={(e) =>
+                                                                    setEditQuestaoForm((p) => p && { ...p, resposta_geral: e.target.value ? Number(e.target.value) : "" })
+                                                                }
+                                                                min={0} max={31}
+                                                                className={inputClass}
+                                                            />
+                                                        </Field>
+                                                    )}
+
+                                                    {/* Gabaritos de idioma */}
+                                                    {f.is_idioma && (
+                                                        <div className="space-y-3">
+                                                            {(["espanhol", "frances", "ingles"] as const).map((lang) => {
+                                                                const labelMap = { espanhol: "Espanhol", frances: "Francês", ingles: "Inglês" };
+                                                                const anuladaKey = `anulada_${lang}` as "anulada_ingles" | "anulada_espanhol" | "anulada_frances";
+                                                                const isAnulada = f[anuladaKey];
+                                                                return (
+                                                                    <div key={lang} className="rounded-xl border border-white/10 bg-slate-900/60 p-4 space-y-3">
+                                                                        <div className="flex items-center justify-between">
+                                                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                                                                {labelMap[lang]}
+                                                                            </span>
+                                                                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                                                                <span className="text-xs text-slate-500">Anulada</span>
+                                                                                <div
+                                                                                    className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${isAnulada ? "bg-red-600" : "bg-slate-700"}`}
+                                                                                    onClick={() => setEditQuestaoForm((p) => p && { ...p, [anuladaKey]: !p[anuladaKey] })}
+                                                                                >
+                                                                                    <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 ${isAnulada ? "translate-x-4" : "translate-x-0"}`} />
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                        {!isAnulada && (
+                                                                            <input
+                                                                                type="number"
+                                                                                value={f[lang]}
+                                                                                onChange={(e) =>
+                                                                                    setEditQuestaoForm((p) => p && { ...p, [lang]: e.target.value ? Number(e.target.value) : "" })
+                                                                                }
+                                                                                min={0} max={31}
+                                                                                placeholder="Resposta (0–31)"
+                                                                                className={inputClass}
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+
+                                                    {editQuestaoError && <ErrorBox message={editQuestaoError} />}
+
+                                                    <div className="flex justify-end gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => { setEditingQuestaoId(null); setEditQuestaoForm(null); }}
+                                                            className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                                                        >
+                                                            Cancelar
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleSaveEditQuestao(q)}
+                                                            disabled={savingEditQuestao}
+                                                            className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-all shadow-lg shadow-indigo-600/20"
+                                                        >
+                                                            {savingEditQuestao ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                                            {savingEditQuestao ? "Salvando..." : "Salvar"}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                     )}
@@ -538,9 +748,9 @@ export default function VestibularConfigPage({
                                             ...p,
                                             is_idioma: v,
                                             resposta_geral: "",
-                                            ingles: "",
                                             espanhol: "",
                                             frances: "",
+                                            ingles: "",
                                         }))
                                     }
                                 />
