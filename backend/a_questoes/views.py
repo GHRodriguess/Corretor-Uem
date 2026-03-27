@@ -196,7 +196,14 @@ class QuestaoViewSet(viewsets.ModelViewSet):
             return Response({"erro": "link é obrigatório"}, status=400)
 
         try:
-            response = requests.get(link)
+            response = requests.get(
+                link,
+                headers={
+                    "User-Agent": "Mozilla/5.0"
+                },
+                timeout=10,
+                proxies={"http": None, "https": None}  
+            )
             response.raise_for_status()
         except Exception as e:
             return Response({"erro": str(e)}, status=400)
