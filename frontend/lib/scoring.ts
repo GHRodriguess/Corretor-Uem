@@ -1,12 +1,10 @@
 export const BITS = [1, 2, 4, 8, 16] as const;
 export type Bit = (typeof BITS)[number];
 
-/** Decodifica um valor bitmask nas alternativas marcadas */
 export function decodeBitmask(value: number): Bit[] {
     return BITS.filter((b) => (value & b) !== 0);
 }
 
-/** Alternativas corretas a partir da resposta */
 export function alternativasCorretas(resposta: number): Bit[] {
     return decodeBitmask(resposta);
 }

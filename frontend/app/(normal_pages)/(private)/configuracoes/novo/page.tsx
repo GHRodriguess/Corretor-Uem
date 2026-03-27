@@ -251,7 +251,6 @@ export default function NovoVestibular() {
                         <label className="group relative flex items-center gap-4 cursor-pointer rounded-xl border border-white/10 bg-slate-900/40 px-4 py-3 hover:border-white/20 transition-colors">
                             <div className="shrink-0 w-14 h-14 rounded-lg border border-white/10 bg-slate-900/60 overflow-hidden flex items-center justify-center">
                                 {imagemPreview ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={imagemPreview}
                                         alt="Preview"
@@ -321,7 +320,6 @@ export default function NovoVestibular() {
     );
 }
 
-// ─── Sub-components ──────────────────────────────────────────────────────────
 
 const inputClass =
     "w-full bg-slate-900/60 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 transition-all";

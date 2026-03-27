@@ -1,4 +1,3 @@
-// components/vestibular-card-skeleton.tsx
 export function VestibularCardSkeleton() {
     return (
         <div className="rounded-2xl border border-white/5 bg-slate-900/50 overflow-hidden flex flex-col animate-pulse">

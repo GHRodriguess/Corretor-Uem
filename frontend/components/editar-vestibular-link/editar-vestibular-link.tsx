@@ -1,4 +1,3 @@
-// components/EditarVestibularLink.tsx
 "use client";
 import Link from "next/link";
 import { Pencil } from "lucide-react";

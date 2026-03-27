@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { TipoVestibular, Vestibular } from "@/types/vestibular";
 import { QuestaoAPI, QuestaoForm } from "@/types/questao";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 
 
@@ -24,8 +25,12 @@ export default function VestibularConfigPage({
     const [vestibular, setVestibular] = useState<Vestibular | null>(null);
     const [questoes, setQuestoes] = useState<QuestaoAPI[]>([]);
     const [loadingPage, setLoadingPage] = useState(true);
+    const [loadingImport, setLoadingImport] = useState(false);
+    const [preview, setPreview] = useState<any>(null);
+    const [errorImport, setErrorImport] = useState<string | null>(null);
+    const [linkPdf, setLinkPdf] = useState("");
+    const [openModalImport, setOpenModalImport] = useState(false);
 
-    // ── Edit vestibular ──
     const [editForm, setEditForm] = useState<{
         nome: string;
         ano: number | "";
@@ -58,7 +63,6 @@ export default function VestibularConfigPage({
     const [savingEditQuestao, setSavingEditQuestao] = useState(false);
     const [editQuestaoError, setEditQuestaoError] = useState<string | null>(null);
 
-    // ── Load inicial ──
     useEffect(() => {
         async function load() {
             const token = localStorage.getItem("access_token");
@@ -100,7 +104,6 @@ export default function VestibularConfigPage({
         load();
     }, [id]);
 
-    // ── Salvar vestibular ──
     async function handleSaveVestibular(e: React.FormEvent) {
         e.preventDefault();
         if (!editForm) return;
@@ -138,7 +141,6 @@ export default function VestibularConfigPage({
         }
     }
 
-    // ── Adicionar questão ──
     async function handleAddQuestao(e: React.FormEvent) {
         e.preventDefault();
         setQuestaoError(null);
@@ -320,7 +322,89 @@ export default function VestibularConfigPage({
         }
     }
 
-    // ─── Render ───────────────────────────────────────────────────────────────
+    async function handlePreviewGabarito() {
+        setLoadingImport(true);
+        setErrorImport(null);
+
+        try {
+            const token = localStorage.getItem("access_token");
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/questoes/preview-gabarito/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        link: linkPdf, 
+                    }),
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.erro || "Erro ao importar gabarito");
+            }
+
+            setPreview(data);
+
+        } catch (err: any) {
+            setErrorImport(err.message);
+        } finally {
+            setLoadingImport(false);
+        }
+    }
+
+    async function handleImportGabarito() {
+        try {
+            const token = localStorage.getItem("access_token");
+
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/questoes/confirmar-importacao/`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        vestibular_id: Number(id),
+                        questoes: preview.questoes,
+                        gabarito_idiomas: preview.gabarito_idiomas,
+                    }),
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.erro || "Erro ao confirmar importação");
+            }
+
+            console.log("IMPORTAÇÃO SALVA:", data);
+
+            const rq = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/questoes/?vestibular=${id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (rq.ok) {
+                const data = await rq.json();
+                setQuestoes(Array.isArray(data) ? data : data.results ?? []);
+            }
+
+            setOpenModalImport(false);
+            setPreview(null);
+
+        } catch (err: any) {
+            console.error(err);
+            setErrorImport(err.message);
+        }
+    }
+
 
     if (loadingPage || !editForm) {
         return (
@@ -426,7 +510,6 @@ export default function VestibularConfigPage({
                             <label className="group relative flex items-center gap-4 cursor-pointer rounded-xl border border-white/10 bg-slate-900/40 px-4 py-3 hover:border-white/20 transition-colors">
                                 <div className="shrink-0 w-14 h-14 rounded-lg border border-white/10 bg-slate-900/60 overflow-hidden flex items-center justify-center">
                                     {imagemPreview ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img src={imagemPreview} alt="Preview" className="w-full h-full object-cover" />
                                     ) : (
                                         <ImagePlus className="h-5 w-5 text-slate-600 group-hover:text-indigo-400 transition-colors" />
@@ -496,7 +579,6 @@ export default function VestibularConfigPage({
 
                                     return (
                                         <li key={q.id} className="bg-slate-900/40">
-                                            {/* ── Row ── */}
                                             <div className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-slate-900/60 transition-colors">
                                                 <div className="flex items-center gap-3 min-w-0 flex-1">
                                                     <span className="shrink-0 w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 text-xs font-bold flex items-center justify-center">
@@ -533,7 +615,6 @@ export default function VestibularConfigPage({
                                                         onClick={() => isEditing ? (setEditingQuestaoId(null), setEditQuestaoForm(null)) : startEditQuestao(q)}
                                                         className={`p-1.5 rounded-lg transition-colors ${isEditing ? "text-indigo-400 bg-indigo-500/10" : "text-slate-600 hover:text-indigo-400 hover:bg-indigo-500/10"}`}
                                                     >
-                                                        {/* pencil icon */}
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -548,11 +629,9 @@ export default function VestibularConfigPage({
                                                 </div>
                                             </div>
 
-                                            {/* ── Inline edit panel ── */}
                                             {isEditing && f && (
                                                 <div className="px-5 pb-5 pt-2 border-t border-white/5 space-y-4">
 
-                                                    {/* Anulada toggle */}
                                                     <div className="rounded-xl border border-white/10 overflow-hidden">
                                                         <Toggle
                                                             icon={<AlertCircle className="h-4 w-4" />}
@@ -563,7 +642,6 @@ export default function VestibularConfigPage({
                                                         />
                                                     </div>
 
-                                                    {/* Resposta geral */}
                                                     {!f.is_idioma && (
                                                         <Field icon={<Hash className="h-4 w-4" />} label="Resposta (0–31)" required>
                                                             <input
@@ -578,7 +656,6 @@ export default function VestibularConfigPage({
                                                         </Field>
                                                     )}
 
-                                                    {/* Gabaritos de idioma */}
                                                     {f.is_idioma && (
                                                         <div className="space-y-3">
                                                             {(["espanhol", "frances", "ingles"] as const).map((lang) => {
@@ -765,7 +842,14 @@ export default function VestibularConfigPage({
 
                             {questaoError && <ErrorBox message={questaoError} />}
 
-                            <div className="flex justify-end">
+                            <div className="flex justify-end gap-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenModalImport(true)}
+                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-500 transition-all shadow-lg shadow-green-600/20"
+                                >
+                                    Importar Gabarito UEM
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={savingQuestao}
@@ -779,11 +863,105 @@ export default function VestibularConfigPage({
                     </div>
                 </section>
             </div>
+            <Dialog open={openModalImport} onOpenChange={setOpenModalImport}>
+                <DialogContent className="max-w-2xl bg-[#0a0c14] border-white/10">
+                    <DialogHeader>
+                        <DialogTitle className="text-white">
+                            Importar Gabarito UEM
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+
+                        <input
+                            type="text"
+                            placeholder="Cole o link do PDF..."
+                            value={linkPdf}
+                            onChange={(e) => setLinkPdf(e.target.value)}
+                            className={inputClass}
+                        />
+
+                        <button
+                            onClick={handlePreviewGabarito}
+                            disabled={loadingImport}
+                            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
+                        >
+                            {loadingImport ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                "Buscar Preview"
+                            )}
+                        </button>
+
+                        {errorImport && (
+                            <ErrorBox message={errorImport} />
+                        )}
+
+                        {preview && (
+                            <div className="mt-4 max-h-100 overflow-y-auto border border-white/10 rounded-xl p-4 bg-slate-900/40 space-y-3">
+                                <p className="text-sm text-slate-400 font-semibold">
+                                    Preview do Gabarito:
+                                </p>
+
+                                {preview.questoes.map((q: any) => {
+                                    const idiomasDestaQuestao = preview.gabarito_idiomas?.filter(
+                                        (g: any) => g.numero === q.numero
+                                    );
+
+                                    return (
+                                        <div
+                                            key={q.numero}
+                                            className="flex flex-col border-b border-white/5 pb-2 pt-1"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-slate-400 font-medium">
+                                                    Questão {q.numero}
+                                                </span>
+
+                                                {q.resposta_geral !== null ? (
+                                                    <span className="text-sm text-white font-bold">
+                                                        {q.resposta_geral}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[10px] font-bold uppercase text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                        <Globe className="h-3 w-3" /> Idioma
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {q.resposta_geral === null && idiomasDestaQuestao && (
+                                                <div className="flex border-t border-white/5 justify-around gap-4 mt-2 pt-1 px-2 py-1.5rounded-lg">
+                                                    {idiomasDestaQuestao.map((g: any, idx: number) => (
+                                                        <div key={idx} className="text-xs">
+                                                            <span className="text-slate-500 capitalize">{g.idioma}: </span>
+                                                            <span className="text-white font-mono">
+                                                                {g.anulada ? "Anulada" : String(g.resposta).padStart(2, '0')}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {preview && (
+                            <button
+                                className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-500"
+                                onClick={handleImportGabarito}
+                            >
+                                Confirmar Importação
+                            </button>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const inputClass =
     "w-full bg-slate-900/60 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 transition-all";

@@ -41,10 +41,8 @@ export default function Loading() {
     );
 }
 
-/* ─── Sub-skeletons ─────────────────────────────────────────── */
 
 function QuestaoCardSkeleton({ index }: { index: number }) {
-    // Delay escalonado para o pulse não ficar sincronizado
     const delay = `${(index % 5) * 80}ms`;
 
     return (
@@ -52,13 +50,11 @@ function QuestaoCardSkeleton({ index }: { index: number }) {
             className="rounded-2xl border border-white/6 bg-slate-900/60 p-4 space-y-3"
             style={{ animationDelay: delay }}
         >
-            {/* Número da questão */}
             <div className="flex items-center justify-between">
                 <div
                     className="h-3.5 w-20 rounded-md bg-slate-800 animate-pulse"
                     style={{ animationDelay: delay }}
                 />
-                {/* Badge anulada (ocasional, só visual) */}
                 {index % 7 === 0 && (
                     <div
                         className="h-4 w-12 rounded-full bg-slate-800 animate-pulse"
@@ -67,7 +63,6 @@ function QuestaoCardSkeleton({ index }: { index: number }) {
                 )}
             </div>
 
-            {/* Opções de resposta — 5 botões */}
             <div className="flex gap-1.5">
                 {["A", "B", "C", "D", "E"].map((_, j) => (
                     <div
@@ -84,21 +79,17 @@ function QuestaoCardSkeleton({ index }: { index: number }) {
 function ScorePanelSkeleton() {
     return (
         <div className="rounded-2xl border border-white/6 bg-slate-900/60 p-4 space-y-4 sticky top-6">
-            {/* Título */}
             <div className="h-3 w-20 rounded-md bg-slate-800 animate-pulse" />
 
-            {/* Pontuação grande */}
             <div className="space-y-1">
                 <div className="h-8 w-24 rounded-md bg-slate-800 animate-pulse" />
                 <div className="h-2.5 w-16 rounded-md bg-slate-800 animate-pulse" />
             </div>
 
-            {/* Barra de progresso */}
             <div className="h-1.5 w-full rounded-full bg-slate-800 animate-pulse overflow-hidden">
                 <div className="h-full w-1/3 rounded-full bg-slate-700 animate-pulse" />
             </div>
 
-            {/* Stats acertos / erros */}
             <div className="space-y-2">
                 {[1, 2].map((i) => (
                     <div key={i} className="flex items-center justify-between">
@@ -108,7 +99,6 @@ function ScorePanelSkeleton() {
                 ))}
             </div>
 
-            {/* Botões */}
             <div className="space-y-2 pt-1">
                 <div className="h-9 w-full rounded-xl bg-indigo-600/20 animate-pulse" />
                 <div className="h-9 w-full rounded-xl bg-slate-800 animate-pulse" />

@@ -1,11 +1,8 @@
-// components/vestibular-card.tsx
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, FileText, ChevronRight } from "lucide-react";
 import { Vestibular } from "@/types/vestibular";
-import { Span } from "next/dist/trace";
 import { Spinner } from "../ui/spinner";
-import { Button } from "../ui/button";
 
 interface VestibularCardProps {
     vestibular: Vestibular;

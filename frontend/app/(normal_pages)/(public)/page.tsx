@@ -1,4 +1,3 @@
-// app/page.tsx
 import { Suspense } from "react";
 import { VestibularList } from "@/components/vestibular-list";
 import { VestibularCardSkeleton } from "@/components/vestibular-card-skeleton";

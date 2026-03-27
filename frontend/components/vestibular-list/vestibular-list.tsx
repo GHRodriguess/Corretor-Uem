@@ -1,6 +1,5 @@
 "use client";
 
-// components/vestibular-list.tsx
 import { useState } from "react";
 import { Search, Filter, BookOpen, FileX } from "lucide-react";
 import { VestibularCard } from "@/components/vestibular-card";
