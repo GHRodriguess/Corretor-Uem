@@ -190,26 +190,15 @@ class QuestaoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path="preview-gabarito")
     def preview_gabarito(self, request):
 
-        link = request.data.get("link")
+        file = request.FILES.get("file")
 
-        if not link:
+        if not file:
             return Response({"erro": "link é obrigatório"}, status=400)
 
-        try:
-            response = requests.get(
-                link,
-                headers={
-                    "User-Agent": "Mozilla/5.0"
-                },
-                timeout=10,
-                proxies={"http": None, "https": None}  
-            )
-            response.raise_for_status()
-        except Exception as e:
-            return Response({"erro": str(e)}, status=400)
+        
 
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-            tmp.write(response.content)
+            tmp.write(file.read())
             pdf_path = tmp.name
 
         imagens = convert_from_path(pdf_path, dpi=300)
@@ -219,7 +208,7 @@ class QuestaoViewSet(viewsets.ModelViewSet):
 
         try:
             index = texto.index("Alternativa(s) Correta(s)")
-            texto = texto[index + 1:]
+            texto = texto[index + len("Alternativa(s) Correta(s)"):]
         except:
             return Response({"erro": "Formato inválido"}, status=400)
 

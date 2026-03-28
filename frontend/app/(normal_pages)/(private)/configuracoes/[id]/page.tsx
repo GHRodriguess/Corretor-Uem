@@ -28,7 +28,7 @@ export default function VestibularConfigPage({
     const [loadingImport, setLoadingImport] = useState(false);
     const [preview, setPreview] = useState<any>(null);
     const [errorImport, setErrorImport] = useState<string | null>(null);
-    const [linkPdf, setLinkPdf] = useState("");
+    const [pdf, setPdf] = useState<File | null>(null);
     const [openModalImport, setOpenModalImport] = useState(false);
 
     const [editForm, setEditForm] = useState<{
@@ -329,17 +329,20 @@ export default function VestibularConfigPage({
         try {
             const token = localStorage.getItem("access_token");
 
+            const formData = new FormData()
+            if (!pdf) {
+                return setErrorImport("O arquivo é obrigatório")
+            }
+            formData.append("file", pdf)
+
             const res = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/questoes/preview-gabarito/`,
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
-                    body: JSON.stringify({
-                        link: linkPdf, 
-                    }),
+                    body: formData,                    
                 }
             );
 
@@ -873,13 +876,35 @@ export default function VestibularConfigPage({
 
                     <div className="space-y-4">
 
-                        <input
-                            type="text"
-                            placeholder="Cole o link do PDF..."
-                            value={linkPdf}
-                            onChange={(e) => setLinkPdf(e.target.value)}
-                            className={inputClass}
-                        />
+                        <label className="relative flex flex-col items-center justify-center gap-3 border border-dashed border-indigo-500/50 rounded-2xl p-10 cursor-pointer bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-400 transition-all">
+                            <div className="w-12 h-12 rounded-xl bg-indigo-500/15 flex items-center justify-center">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                <polyline points="14,2 14,8 20,8" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round"/>
+                                <line x1="12" y1="18" x2="12" y2="12" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round"/>
+                                <polyline points="9,15 12,12 15,15" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                            </div>
+
+                            {pdf ? (
+                                <p className="text-indigo-200 text-sm font-medium">{pdf.name}</p>
+                            ) : (
+                                <>
+                                <p className="text-indigo-200 text-sm font-medium">
+                                    Arraste o PDF ou{" "}
+                                    <span className="text-indigo-400 underline">escolha um arquivo</span>
+                                </p>
+                                <p className="text-slate-500 text-xs">Somente arquivos .pdf</p>
+                                </>
+                            )}
+
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                onChange={(e) => setPdf(e.target.files?.[0] || null)}
+                            />
+                            </label>
 
                         <button
                             onClick={handlePreviewGabarito}
