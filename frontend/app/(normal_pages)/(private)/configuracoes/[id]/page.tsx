@@ -95,7 +95,6 @@ export default function VestibularConfigPage({
             );
             if (rq.ok) {
                 const data = await rq.json();
-                console.log(data)
                 setQuestoes(Array.isArray(data) ? data : data.results ?? []);
             }
 
@@ -386,8 +385,6 @@ export default function VestibularConfigPage({
             if (!res.ok) {
                 throw new Error(data.erro || "Erro ao confirmar importação");
             }
-
-            console.log("IMPORTAÇÃO SALVA:", data);
 
             const rq = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/questoes/?vestibular=${id}`,
