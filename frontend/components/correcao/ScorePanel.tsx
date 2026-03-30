@@ -81,20 +81,20 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
                 {!revealed ? (
                     <button
                         onClick={onReveal}
-                        className="w-full py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20"
+                        className="w-full cursor-pointer py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/20"
                     >
                         Ver Gabarito
                     </button>
                 ) : (
                     <button 
                         onClick={onReveal}
-                        className="flex items-center gap-1.5 text-xs font-semibold justify-center py-2 w-full rounded-xl transition-all  text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                        className="flex cursor-pointer items-center gap-1.5 text-xs font-semibold justify-center py-2 w-full rounded-xl transition-all  text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                         Esconder Gabarito
                     </button>
                 )}
                 <button
                     onClick={onReset}
-                    className="w-full py-2.5 rounded-xl text-xs font-semibold text-slate-500 border border-white/6 hover:text-slate-300 hover:border-white/12 transition-all"
+                    className="w-full cursor-pointer py-2.5 rounded-xl text-xs font-semibold text-slate-500 border border-white/6 hover:text-slate-300 hover:border-white/12 transition-all"
                 >
                     Limpar Respostas
                 </button>

@@ -556,7 +556,7 @@ export default function VestibularConfigPage({
                             <button
                                 type="submit"
                                 disabled={savingVestibular}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-all shadow-lg shadow-indigo-600/20"
+                                className="flex items-center cursor-pointer gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-all shadow-lg shadow-indigo-600/20"
                             >
                                 {savingVestibular ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                 {savingVestibular ? "Salvando..." : "Salvar Alterações"}
@@ -846,14 +846,14 @@ export default function VestibularConfigPage({
                                 <button
                                     type="button"
                                     onClick={() => setOpenModalImport(true)}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-500 transition-all shadow-lg shadow-green-600/20"
+                                    className="flex cursor-pointer items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-500 transition-all shadow-lg shadow-green-600/20"
                                 >
                                     Importar Gabarito UEM
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={savingQuestao}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-all shadow-lg shadow-indigo-600/20"
+                                    className="flex cursor-pointer items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60 transition-all shadow-lg shadow-indigo-600/20"
                                 >
                                     {savingQuestao ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                                     {savingQuestao ? "Adicionando..." : "Adicionar Questão"}
@@ -906,7 +906,7 @@ export default function VestibularConfigPage({
                         <button
                             onClick={handlePreviewGabarito}
                             disabled={loadingImport}
-                            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
+                            className="w-full cursor-pointer flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60"
                         >
                             {loadingImport ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -4,6 +4,7 @@ import { Vestibular } from "@/types/vestibular";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "../ui/button";
 
 export const DeletarVestibular = ({ v }: { v: Vestibular }) => {
     const router = useRouter();
@@ -29,13 +30,14 @@ export const DeletarVestibular = ({ v }: { v: Vestibular }) => {
     }
 
     return (
-        <button
+        <Button
             onClick={handleDelete}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 disabled:opacity-50 transition-colors"
+            variant={"destructive"}
+            className="flex cursor-pointer items-center bg-transparent gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 disabled:opacity-50 transition-colors"
         >
             <Trash2 className="h-3.5 w-3.5" />
             {loading ? "Excluindo..." : "Excluir"}
-        </button>
+        </Button>
     );
 };

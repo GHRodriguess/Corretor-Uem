@@ -167,21 +167,21 @@ function MobileSummary({
                     {!revealed ? (
                         <button
                             onClick={onReveal}
-                            className="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all"
+                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all"
                         >
                             Ver Gabarito
                         </button>
                     ) : (
                         <button
                             onClick={onReveal}
-                            className="px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all"
+                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all"
                         >
                             Esconder Gabarito
                         </button>
                     )}
                     <button
                         onClick={onReset}
-                        className="px-3 py-2 rounded-xl text-xs font-semibold text-slate-500 border border-white/8 hover:text-slate-300 transition-all"
+                        className="px-3 py-2 cursor-pointer rounded-xl text-xs font-semibold text-slate-500 border border-white/8 hover:text-slate-300 transition-all"
                     >
                         Limpar
                     </button>

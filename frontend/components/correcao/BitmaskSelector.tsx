@@ -41,7 +41,7 @@ export function BitmaskSelector({ value, onChange, disabled }: BitmaskSelectorPr
                             disabled={disabled}
                             onClick={() => toggle(bit)}
                             className={`
-                                flex-1 h-9 rounded-lg text-xs font-bold border transition-all
+                                flex-1 h-9 rounded-lg text-xs font-bold border cursor-pointer transition-all
                                 disabled:cursor-not-allowed disabled:opacity-50
                                 ${
                                     active

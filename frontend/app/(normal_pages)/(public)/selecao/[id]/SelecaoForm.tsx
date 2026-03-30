@@ -181,7 +181,7 @@ export function SelecaoForm({
                                     key={i.value}
                                     type="button"
                                     onClick={() => setIdioma(i.value)}
-                                    className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all flex flex-col items-center gap-1.5 ${
+                                    className={`py-3 px-2 cursor-pointer rounded-xl text-sm font-semibold border transition-all flex flex-col items-center gap-1.5 ${
                                         idioma === i.value
                                             ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20"
                                             : "bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
@@ -201,7 +201,7 @@ export function SelecaoForm({
                             <button
                                 type="button"
                                 onClick={() => setTooltipAberto(true)}
-                                className="ml-0.5 text-slate-600 hover:text-indigo-400 transition-colors"
+                                className="ml-0.5 text-slate-600 cursor-pointer hover:text-indigo-400 transition-colors"
                                 aria-label="Saiba mais sobre os modos de correção"
                             >
                                 <HelpCircle className="h-4.5 w-4.5 hover:scale-125 transition-all animate-bounce" />
@@ -213,7 +213,7 @@ export function SelecaoForm({
                                     key={m.value}
                                     type="button"
                                     onClick={() => setModo(m.value)}
-                                    className={`py-3 px-4 rounded-xl text-sm font-semibold border transition-all text-left ${
+                                    className={`py-3 px-4 cursor-pointer rounded-xl text-sm font-semibold border transition-all text-left ${
                                         modo === m.value
                                             ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20"
                                             : "bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
@@ -228,7 +228,7 @@ export function SelecaoForm({
                     <button
                         onClick={handleConfirmar}
                         disabled={!podeConfirmar}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-600/20"
+                        className="w-full cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-600/20"
                     >
                         Iniciar Correção
                         <ChevronRight className="h-4 w-4" />
