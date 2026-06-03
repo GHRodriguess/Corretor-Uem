@@ -19,7 +19,11 @@ export function CorrecaoClient({ questoes }: { questoes: Questao[] }) {
 
     useEffect(() => {
         const saved = sessionStorage.getItem("modoCorrecao") as Modo | null;
-        if (saved === "padrao" || saved === "simplificada") setModo(saved);
+        if (saved === "padrao" || saved === "simplificada") {
+            setTimeout(() => {
+                setModo(saved);
+            }, 0);
+        }
     }, []);
 
     const handleMarcacao = useCallback((numero: number, value: number) => {
