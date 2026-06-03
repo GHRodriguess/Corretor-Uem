@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Questao } from "@/types/questao";
 import { CorrecaoClient } from "./CorrecaoClient";
