@@ -46,38 +46,38 @@ function TooltipModal({
             className="fixed inset-0 z-50 flex items-center justify-center px-4"
             onClick={onClose}
         >
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-xs" />
 
             <div
-                className="relative bg-[#111827] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl shadow-black/60"
+                className="relative bg-card border border-border/80 rounded-3xl p-6 max-w-sm w-full shadow-2xl shadow-indigo-950/10 animate-in fade-in-50 zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                     <X className="h-4 w-4" />
                 </button>
 
-                <h3 className="text-white font-bold text-base mb-4">
+                <h3 className="text-foreground font-extrabold text-lg mb-4">
                     Modos de Correção
                 </h3>
 
                 <div className="space-y-4">
                     {MODOS.map((m) => (
                         <div key={m.value} className="space-y-1">
-                            <p className="text-indigo-400 text-sm font-semibold">
+                            <p className="text-indigo-500 dark:text-indigo-400 text-sm font-bold">
                                 {m.label}
                             </p>
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <p className="text-muted-foreground text-xs leading-relaxed">
                                 {m.desc}
                             </p>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-5 p-3 rounded-xl bg-slate-900/80 border border-white/5">
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                <div className="mt-5 p-3 rounded-2xl bg-muted/50 border border-border/50">
+                    <p className="text-[11px] text-muted-foreground/80 leading-relaxed">
                         O sistema de pontuação PAS usa bitmask — cada item vale uma
                         potência de 2 (1, 2, 4, 8, 16), e a soma indica quais itens
                         foram marcados.
@@ -117,38 +117,38 @@ export function SelecaoForm({
         idioma !== null && modo !== null && (!isPas || serieSelecionada !== null);
 
     return (
-        <div className="h-full bg-[#0a0c14]">
+        <div className="relative min-h-screen py-10 overflow-hidden">
             {tooltipAberto && (
                 <TooltipModal onClose={() => setTooltipAberto(false)} />
             )}
 
-            <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-150 h-75 rounded-full bg-indigo-600/10 blur-[100px]" />
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-150 h-75 rounded-full bg-indigo-600/5 dark:bg-indigo-600/8 blur-[120px]" />
             </div>
 
-            <div className="relative container mx-auto px-4 py-10 max-w-lg">
+            <div className="relative container mx-auto px-4 max-w-lg z-10">
                 <Link
                     href="/"
-                    className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-8 group"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8 group"
                 >
                     <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                     Voltar
                 </Link>
 
                 <div className="mb-10">
-                    <h1 className="text-white text-3xl font-bold tracking-tight">
+                    <h1 className="text-foreground text-3xl font-extrabold tracking-tight">
                         {vestibular.nome}
                     </h1>
-                    <p className="text-slate-500 text-sm mt-1 capitalize">
+                    <p className="text-muted-foreground text-sm mt-2 capitalize font-medium">
                         {vestibular.tipo} · {vestibular.ano}
                     </p>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-8 bg-card/45 backdrop-blur-xs border border-border/40 p-6 sm:p-8 rounded-3xl shadow-sm">
                     {isPas && (
                         <div className="space-y-3">
-                            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                <Layers className="h-4 w-4 text-slate-600" />
+                            <label className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                <Layers className="h-4 w-4 text-indigo-500/80 dark:text-indigo-400/80" />
                                 Série
                             </label>
                             <div className="grid grid-cols-3 gap-3">
@@ -157,10 +157,10 @@ export function SelecaoForm({
                                         key={s.id}
                                         type="button"
                                         onClick={() => setSerieSelecionada(s)}
-                                        className={`py-3 rounded-xl text-sm font-semibold border transition-all ${
+                                        className={`py-3 rounded-2xl text-sm font-bold border transition-all cursor-pointer ${
                                             serieSelecionada?.id === s.id
-                                                ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20"
-                                                : "bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
+                                                ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/15 scale-[1.02]"
+                                                : "bg-background border-border text-muted-foreground hover:border-indigo-500/20 hover:bg-muted/40 hover:text-foreground"
                                         }`}
                                     >
                                         {s.serie}ª Série
@@ -171,8 +171,8 @@ export function SelecaoForm({
                     )}
 
                     <div className="space-y-3">
-                        <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                            <Globe className="h-4 w-4 text-slate-600" />
+                        <label className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                            <Globe className="h-4 w-4 text-indigo-500/80 dark:text-indigo-400/80" />
                             Idioma
                         </label>
                         <div className="grid grid-cols-3 gap-3">
@@ -181,10 +181,10 @@ export function SelecaoForm({
                                     key={i.value}
                                     type="button"
                                     onClick={() => setIdioma(i.value)}
-                                    className={`py-3 px-2 cursor-pointer rounded-xl text-sm font-semibold border transition-all flex flex-col items-center gap-1.5 ${
+                                    className={`py-3 px-2 cursor-pointer rounded-2xl text-sm font-bold border transition-all flex flex-col items-center gap-1.5 ${
                                         idioma === i.value
-                                            ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20"
-                                            : "bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
+                                            ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/15 scale-[1.02]"
+                                            : "bg-background border-border text-muted-foreground hover:border-indigo-500/20 hover:bg-muted/40 hover:text-foreground"
                                     }`}
                                 >
                                     <span className="text-xl">{i.flag}</span>
@@ -195,16 +195,16 @@ export function SelecaoForm({
                     </div>
 
                     <div className="space-y-3">
-                        <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                            <SlidersHorizontal className="h-4 w-4 text-slate-600" />
+                        <label className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                            <SlidersHorizontal className="h-4 w-4 text-indigo-500/80 dark:text-indigo-400/80" />
                             Modo de Correção
                             <button
                                 type="button"
                                 onClick={() => setTooltipAberto(true)}
-                                className="ml-0.5 text-slate-600 cursor-pointer hover:text-indigo-400 transition-colors"
+                                className="ml-1 text-muted-foreground cursor-pointer hover:text-indigo-500 transition-colors"
                                 aria-label="Saiba mais sobre os modos de correção"
                             >
-                                <HelpCircle className="h-4.5 w-4.5 hover:scale-125 transition-all animate-bounce" />
+                                <HelpCircle className="h-4.5 w-4.5 hover:scale-110 transition-transform" />
                             </button>
                         </label>
                         <div className="grid grid-cols-2 gap-3">
@@ -213,10 +213,10 @@ export function SelecaoForm({
                                     key={m.value}
                                     type="button"
                                     onClick={() => setModo(m.value)}
-                                    className={`py-3 px-4 cursor-pointer rounded-xl text-sm font-semibold border transition-all text-left ${
+                                    className={`py-3 px-4 cursor-pointer rounded-2xl text-sm font-bold border transition-all text-center ${
                                         modo === m.value
-                                            ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20"
-                                            : "bg-slate-900/60 border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-200"
+                                            ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/15 scale-[1.02]"
+                                            : "bg-background border-border text-muted-foreground hover:border-indigo-500/20 hover:bg-muted/40 hover:text-foreground"
                                     }`}
                                 >
                                     {m.label}
@@ -228,7 +228,7 @@ export function SelecaoForm({
                     <button
                         onClick={handleConfirmar}
                         disabled={!podeConfirmar}
-                        className="w-full cursor-pointer flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-600/20"
+                        className="w-full cursor-pointer flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-linear-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white disabled:opacity-45 disabled:cursor-not-allowed transition-all shadow-md shadow-indigo-600/10 hover:shadow-lg hover:shadow-indigo-600/20"
                     >
                         Iniciar Correção
                         <ChevronRight className="h-4 w-4" />

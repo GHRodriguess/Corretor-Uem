@@ -15,10 +15,10 @@ export function SimpleSelector({ value, onChange, disabled }: SimpleSelectorProp
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <span className="text-[11px] text-slate-500 uppercase tracking-widest font-medium">
+                <span className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">
                     Valor
                 </span>
-                <span className="text-[10px] text-slate-600">0 – 31</span>
+                <span className="text-[10px] text-muted-foreground/50">0 – 31</span>
             </div>
             <input
                 type="number"
@@ -29,11 +29,11 @@ export function SimpleSelector({ value, onChange, disabled }: SimpleSelectorProp
                 disabled={disabled}
                 onChange={handleChange}
                 className="
-                    w-full h-9 rounded-lg bg-slate-900 border border-white/8
-                    text-center text-sm font-bold text-white tabular-nums
+                    w-full h-9 rounded-lg bg-background border border-border
+                    text-center text-sm font-bold text-foreground tabular-nums
                     focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20
                     disabled:opacity-50 disabled:cursor-not-allowed
-                    transition-all placeholder:text-slate-700
+                    transition-all placeholder:text-muted-foreground/30
                     [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
                 "
             />

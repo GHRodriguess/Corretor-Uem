@@ -19,12 +19,12 @@ export function BitmaskSelector({ value, onChange, disabled }: BitmaskSelectorPr
     return (
         <div className="space-y-2">
             <div className="flex items-center justify-between">
-                <span className="text-[11px] text-slate-500 uppercase tracking-widest font-medium">
+                <span className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium">
                     Soma
                 </span>
                 <span
                     className={`text-lg font-bold tabular-nums transition-colors ${
-                        sum === 0 ? "text-slate-600" : "text-white"
+                        sum === 0 ? "text-muted-foreground/40" : "text-foreground"
                     }`}
                 >
                     {sum}
@@ -46,7 +46,7 @@ export function BitmaskSelector({ value, onChange, disabled }: BitmaskSelectorPr
                                 ${
                                     active
                                         ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/30"
-                                        : "bg-slate-900 border-white/8 text-slate-500 hover:border-indigo-500/40 hover:text-slate-300"
+                                        : "bg-background border-border text-muted-foreground hover:border-indigo-500/30 hover:text-foreground hover:bg-muted/40"
                                 }
                             `}
                         >

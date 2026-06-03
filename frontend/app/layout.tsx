@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html className="h-full" suppressHydrationWarning>
+        <html lang="pt-BR" suppressHydrationWarning>
             <head>
                 <script
                     dangerouslySetInnerHTML={{
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <SpeedInsights />
             <Analytics/>
-            <body className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased`}>
                 {children}
             </body>
         </html>

@@ -16,8 +16,8 @@ export const Navbar = () => {
     }, [])
 
     return (
-        <nav className="bg-background h-14 flex items-center justify-between px-6 border-b border-border shadow-xs">
-            <Link href="/" className="text-foreground text-2xl font-semibold tracking-tight">
+        <nav className="sticky top-0 z-50 bg-background/70 backdrop-blur-md h-14 flex items-center justify-between px-6 border-b border-border/40 shadow-xs">
+            <Link href="/" className="text-foreground text-2xl font-semibold tracking-tight hover:opacity-90 transition-opacity">
                 Corretor UEM
             </Link>
 

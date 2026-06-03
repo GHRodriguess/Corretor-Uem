@@ -9,9 +9,9 @@ const jakarta = Plus_Jakarta_Sans({
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col min-h-screen">
             <Navbar />
-            <div className={`${jakarta.variable} font-sans h-full flex-1 overflow-auto`}>
+            <div className={`${jakarta.variable} font-sans flex-1`}>
                 {children}
             </div>
         </div>
