@@ -3,31 +3,41 @@
 import { useEffect, useState } from "react"
 import { Settings } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import AlternadorTema from "./alternador-tema"
+import { verificarSeStaff } from "@/lib/autenticacao"
 
 export const Navbar = () => {
+    const pathname = usePathname()
     const [token, setToken] = useState<string | null>(null)
+    const [isStaff, setIsStaff] = useState<boolean>(false)
 
     useEffect(() => {
-        setToken(localStorage.getItem("access_token"))
-    }, [])
-
-
+        const savedToken = localStorage.getItem("access_token")
+        setTimeout(() => {
+            setToken(savedToken)
+            setIsStaff(verificarSeStaff(savedToken))
+        }, 0)
+    }, [pathname])
 
     return (
-        <nav className="bg-slate-950 h-14 flex items-center justify-between px-6 border-b border-white/10 shadow-sm">
-            <Link href="/" className="text-gray-100 text-2xl font-semibold tracking-tight">
+        <nav className="sticky top-0 z-50 bg-background/70 backdrop-blur-md h-14 flex items-center justify-between px-6 border-b border-border/40 shadow-xs">
+            <Link href="/" className="text-foreground text-2xl font-semibold tracking-tight hover:opacity-90 transition-opacity">
                 Corretor UEM
             </Link>
 
-            {token && (
-                <Link
-                    href="/configuracoes"
-                    className="text-gray-400 hover:text-gray-100 transition-colors duration-200 rounded-md p-1.5 hover:bg-white/10"
-                    aria-label="Configurações"
-                >
-                    <Settings size={20} />
-                </Link>
-            )}
+            <div className="flex items-center gap-4">
+                <AlternadorTema />
+                {token && isStaff && (
+                    <Link
+                        href="/configuracoes"
+                        className="text-muted-foreground hover:text-foreground transition-colors duration-200 rounded-md p-1.5 hover:bg-accent"
+                        aria-label="Configurações"
+                    >
+                        <Settings size={20} />
+                    </Link>
+                )}
+            </div>
         </nav>
     )
 }

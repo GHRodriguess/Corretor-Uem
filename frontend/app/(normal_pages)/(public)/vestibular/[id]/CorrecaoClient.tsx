@@ -19,7 +19,11 @@ export function CorrecaoClient({ questoes }: { questoes: Questao[] }) {
 
     useEffect(() => {
         const saved = sessionStorage.getItem("modoCorrecao") as Modo | null;
-        if (saved === "padrao" || saved === "simplificada") setModo(saved);
+        if (saved === "padrao" || saved === "simplificada") {
+            setTimeout(() => {
+                setModo(saved);
+            }, 0);
+        }
     }, []);
 
     const handleMarcacao = useCallback((numero: number, value: number) => {
@@ -38,16 +42,16 @@ export function CorrecaoClient({ questoes }: { questoes: Questao[] }) {
 
 
     return (
-        <div className="min-h-screen bg-[#0a0c14]">
-            <div className="pointer-events-none fixed inset-0 overflow-hidden">
-                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-150 h-75 rounded-full bg-indigo-600/8 blur-[120px]" />
+        <div className="relative min-h-screen py-10 overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-150 h-75 rounded-full bg-indigo-600/5 dark:bg-indigo-600/8 blur-[120px]" />
             </div>
 
-            <div className="relative container mx-auto px-4 py-10 max-w-5xl">
+            <div className="relative container mx-auto px-4 max-w-5xl z-10">
                 <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors group"
+                        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
                     >
                         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                         Voltar
@@ -85,8 +89,8 @@ export function CorrecaoClient({ questoes }: { questoes: Questao[] }) {
                     </div>
                 </div>
 
-                <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 pt-2 bg-linear-to-t from-[#0a0c14] to-transparent">
-                    <div className="rounded-2xl bg-slate-900/95 border border-white/8 px-4 py-3 backdrop-blur-sm shadow-2xl shadow-black/60">
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 px-4 pb-4 pt-2 bg-linear-to-t from-background via-background/90 to-transparent">
+                    <div className="rounded-2xl bg-card/95 border border-border px-4 py-3 backdrop-blur-md shadow-2xl shadow-indigo-950/10">
                         <MobileSummary
                             questoes={questoes}
                             marcacoes={marcacoes}
@@ -150,14 +154,14 @@ function MobileSummary({
         <div>
             <div className="flex items-center gap-3">
                 <div className="flex-1">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
                         Pontuação
                     </p>
                     <p
-                        className={`text-xl font-black tabular-nums leading-tight text-indigo-400`}
+                        className="text-xl font-black tabular-nums leading-tight text-indigo-500 dark:text-indigo-400"
                     >
                         {total.toFixed(total % 1 === 0 ? 0 : 2)}
-                        <span className="text-slate-600 text-xs font-normal">
+                        <span className="text-muted-foreground/60 text-xs font-normal">
                             {" "}
                             / {max}
                         </span>
@@ -167,21 +171,21 @@ function MobileSummary({
                     {!revealed ? (
                         <button
                             onClick={onReveal}
-                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all"
+                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/10 transition-all"
                         >
                             Ver Gabarito
                         </button>
                     ) : (
                         <button
                             onClick={onReveal}
-                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all"
+                            className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-all"
                         >
                             Esconder Gabarito
                         </button>
                     )}
                     <button
                         onClick={onReset}
-                        className="px-3 py-2 cursor-pointer rounded-xl text-xs font-semibold text-slate-500 border border-white/8 hover:text-slate-300 transition-all"
+                        className="px-3 py-2 cursor-pointer rounded-xl text-xs font-bold text-muted-foreground border border-border/85 hover:text-foreground hover:bg-muted/50 transition-all"
                     >
                         Limpar
                     </button>

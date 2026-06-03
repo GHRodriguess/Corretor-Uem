@@ -1,50 +1,47 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .models import Vestibular
 from .serializers import VestibularSerializer
 
-# Create your views here.
 class VestibularViewset(viewsets.ModelViewSet):
     
     serializer_class = VestibularSerializer
     
     def get_queryset(self):
         queryset = Vestibular.objects.all().order_by('-ano', '-id')
-        nome = self.request.query_params.get("nome")
-        ano = self.request.query_params.get("ano")
-        tipo = self.request.query_params.get("tipo")
+        name = self.request.query_params.get("nome")
+        year = self.request.query_params.get("ano")
+        type_param = self.request.query_params.get("tipo")
 
-        if nome:
-            queryset = queryset.filter(nome=nome)
-        if ano:
-            queryset = queryset.filter(ano=ano)
-        if tipo:
-            queryset = queryset.filter(tipo=tipo)
+        if name:
+            queryset = queryset.filter(nome=name)
+        if year:
+            queryset = queryset.filter(ano=year)
+        if type_param:
+            queryset = queryset.filter(tipo=type_param)
 
         return queryset
     
     def get_permissions(self):
         if self.action in ['list', 'retrieve', 'vestibulares_compactados']:
             return [AllowAny()]
-        return [IsAuthenticated()]
-    
+        return [IsAdminUser()]
     
     @action(detail=False, methods=["get"], url_path="compactados", permission_classes=[], authentication_classes=[])
     def vestibulares_compactados(self, request, *args, **kwargs):
-        qs = self.get_queryset().order_by('-ano', '-id')
+        queryset = self.get_queryset().order_by('-ano', '-id')
 
-        vistos = set()
-        resultado = []
+        seen = set()
+        result = []
 
-        for v in qs:
-            chave = (v.nome, v.ano) if v.tipo == 'pas' else v.id
+        for vestibular in queryset:
+            key = (vestibular.nome, vestibular.ano) if vestibular.tipo == 'pas' else vestibular.id
 
-            if chave not in vistos:
-                vistos.add(chave)
-                resultado.append(v)
+            if key not in seen:
+                seen.add(key)
+                result.append(vestibular)
 
-        serializer = self.get_serializer(resultado, many=True)
+        serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
-

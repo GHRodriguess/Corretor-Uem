@@ -1,6 +1,7 @@
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAdminUser
 from .models import Questao, QuestaoIdioma
 from .serializers import QuestaoSerializer, QuestaoIdiomaSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
@@ -23,6 +24,11 @@ class QuestaoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(vestibular=vestibular)
         
         return queryset.order_by("numero")
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve", "gabarito"]:
+            return [AllowAny()]
+        return [IsAdminUser()]
     
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().prefetch_related("gabaritos_idioma")
@@ -99,7 +105,6 @@ class QuestaoViewSet(viewsets.ModelViewSet):
         return Response(data)
 
     @extend_schema(
-        # summary="Preview de importação de gabarito via PDF",
         description=(
             "Recebe um link de PDF de gabarito (ex: UEM) e retorna um preview das questões extraídas.\n\n"
             "⚠️ NÃO salva no banco.\n\n"
@@ -370,3 +375,8 @@ class QuestaoViewSet(viewsets.ModelViewSet):
 class QuestaoIdiomaViewSet(viewsets.ModelViewSet):
     queryset = QuestaoIdioma.objects.all()
     serializer_class = QuestaoIdiomaSerializer
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return [AllowAny()]
+        return [IsAdminUser()]
