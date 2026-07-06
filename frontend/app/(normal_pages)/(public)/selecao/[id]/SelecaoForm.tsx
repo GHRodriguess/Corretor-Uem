@@ -144,7 +144,7 @@ export function SelecaoForm({
                     </p>
                 </div>
 
-                <div className="space-y-8 bg-card/45 backdrop-blur-xs border border-border/40 p-6 sm:p-8 rounded-3xl shadow-sm">
+                <div className="space-y-8 bg-card border border-border p-6 sm:p-8 rounded-3xl shadow-sm">
                     {isPas && (
                         <div className="space-y-3">
                             <label className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">

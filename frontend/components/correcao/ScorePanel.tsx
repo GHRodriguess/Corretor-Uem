@@ -43,7 +43,7 @@ export function ScorePanel({ questoes, marcacoes, revealed, onReveal, onReset }:
     const pct = maxPossivel > 0 ? (total / maxPossivel) * 100 : 0;
 
     return (
-        <div className="sticky top-18 rounded-3xl bg-card/45 border border-border/40 p-6 space-y-4 backdrop-blur-xs shadow-xs hover:bg-card/75 transition-all duration-300">
+        <div className="sticky top-18 rounded-3xl bg-card border border-border p-6 space-y-4 shadow-xs transition-all duration-300">
             <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 font-semibold">
                     Pontuação
