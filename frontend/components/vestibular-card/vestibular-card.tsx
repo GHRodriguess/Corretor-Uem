@@ -12,7 +12,7 @@ export function VestibularCard({ vestibular }: VestibularCardProps) {
     const href = vestibular.com_gabarito ? `/selecao/${vestibular.id}` : "/"
 
     return (
-        <div className="group relative cursor-pointer rounded-3xl border border-border/40 bg-card/45 backdrop-blur-xs overflow-hidden flex flex-col transition-all duration-300 hover:bg-card/85 hover:border-indigo-500/30 shadow-xs hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1.5">
+        <div className="group relative cursor-pointer rounded-3xl border border-border bg-card overflow-hidden flex flex-col transition-all duration-300 hover:border-indigo-500/40 shadow-xs hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1.5">
             <Link href={href} >
                 <div className="relative w-full overflow-hidden">
                     <Image
@@ -24,7 +24,7 @@ export function VestibularCard({ vestibular }: VestibularCardProps) {
                         sizes="100vw"
                         className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-card/90 via-card/10 to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-linear-to-t from-card via-transparent to-transparent opacity-90" />
                 </div>
             </Link>
 

@@ -62,7 +62,7 @@ export function QuestaoCard({
     return (
         <div
             className={`
-                relative rounded-2xl bg-card/45 backdrop-blur-xs border p-4 space-y-3
+                relative rounded-2xl bg-card border p-4 space-y-3
                 shadow-xs transition-all duration-300
                 ${cardBorder} ${cardGlow}
             `}

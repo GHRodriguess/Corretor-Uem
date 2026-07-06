@@ -26,7 +26,7 @@ export function VestibularList({ vestibulares }: VestibularListProps) {
 
     return (
         <>
-            <section className="relative mb-16 overflow-hidden rounded-3xl bg-card/45 backdrop-blur-sm border border-border/50 p-8 lg:p-12 shadow-sm">
+            <section className="relative mb-16 overflow-hidden rounded-3xl bg-card border border-border p-8 lg:p-12 shadow-sm">
                 <div className="absolute -top-24 -right-24 h-72 w-72 bg-indigo-600/15 blur-[120px] rounded-full" />
                 <div className="absolute -bottom-24 -left-24 h-72 w-72 bg-purple-600/10 blur-[120px] rounded-full" />
 
